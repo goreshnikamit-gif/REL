@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-status-bar-style" content="black-translucent">
-<title>REL - ניהול פיננסי פרימיום</title>
+<title>REL Management - ניהול פיננסי</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap');
 
@@ -45,6 +45,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .l-box {background:var(--bg-card);padding:40px 30px;border-radius:24px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border-color)}
 .l-ttl {font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg, #14b8a6, #3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .l-sub {font-size:14px;color:var(--text-sub);margin-bottom:32px;line-height:1.4;}
+.g-btn-wrapper {display:flex;justify-content:center;width:100%;min-height:44px;}
 
 .summary-dash {display: flex; justify-content: space-between; background: var(--bg-card); padding: 12px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
 .summary-dash > div {flex: 1;}
@@ -52,13 +53,17 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .sd-val {font-size: 16px; font-weight: 800; color: var(--text-main);}
 
 .insight-item {font-size:13px; margin-bottom:8px; padding:10px 12px; background:var(--bg-input); border-radius:8px; border-right:4px solid var(--accent); line-height:1.4; color:var(--text-main);}
+.insight-item:last-child {margin-bottom:0;}
 
 .loader{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg-body);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999}
 .loader.hide{display:none}
 .spinner{width:40px;height:40px;border:3px solid var(--border-color);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.loader-txt{margin-top:14px;color:var(--text-sub);font-size:13px}
+.loader-err{color:#f87171;font-size:12px;margin-top:8px;text-align:center;padding:0 20px}
 
 .fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none;cursor:pointer;transition:transform 0.2s}
+.fab.exp{background:#f97316;box-shadow:0 4px 12px rgba(249,115,22,0.4)}
 .fab:active{transform:scale(0.95)}
 
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
@@ -68,36 +73,86 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .inp-g{margin-bottom:12px}
 .inp-l{display:block;font-size:11px;color:var(--text-sub);margin-bottom:4px}
 .inp{width:100%;padding:10px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;font-size:14px;outline:none}
+.inp:focus{border-color:var(--accent)}
+.m-acts{display:flex;gap:10px;margin-top:20px}
+.btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:600;font-family:inherit;cursor:pointer}
+.btn-c{background:var(--bg-input);color:var(--text-main)}
+.btn-s{background:var(--accent);color:white}
+.btn-s:disabled{opacity:0.7;cursor:wait}
 
 .hdr{background:linear-gradient(135deg,#134e4a,#0d9488,#134e4a);padding:16px 16px 12px;padding-top:env(safe-area-inset-top);position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
 .hdr-r{display:flex;align-items:center;justify-content:space-between}
 .lg{font-size:18px;font-weight:800;color:#fff}.lg-s{font-size:10px;color:rgba(255,255,255,0.8)}
+.plb{color:rgba(255,255,255,0.9);font-size:11px;font-weight:500}
 .ref-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:14px;font-family:inherit;cursor:pointer;margin-right:5px}
 
+.dba{background:var(--bg-card);padding:12px 14px;border-bottom:1px solid var(--border-color);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dba label{font-size:11px;color:var(--text-sub);font-weight:500}
+.di{border:1px solid var(--border-color);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;color:var(--text-main);background:var(--bg-input);flex:1;min-width:100px;text-align:center}
+.abtn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+.prw{display:flex;gap:5px;width:100%;margin-top:4px;overflow-x:auto;padding-bottom:2px}
+.pb{padding:4px 9px;border-radius:14px;border:1px solid var(--border-color);font-size:10px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub);white-space:nowrap}
+.pb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .ct{padding:12px}
 .kg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .kp{background:var(--bg-input);border-radius:12px;padding:12px 14px;flex:1 1 45%;min-width:135px;border:1px solid var(--border-color)}
 .kl{font-size:10px;color:var(--text-sub);margin-bottom:2px;font-weight:500}
-.kv{font-size:20px;font-weight:700;}
-
+.kv{font-size:20px;font-weight:700;letter-spacing:-0.02em}
+.ks{font-size:9px;color:var(--text-sub);margin-top:2px}
 .cd{background:var(--bg-card);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--border-color)}
 .ttt{font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-main)}
-
+.tl{color:var(--accent)}.or{color:#f97316}.bl{color:#3b82f6}.rd{color:#f87171}.gn{color:#34d399}
 .bars{display:flex;align-items:flex-end;gap:3px;height:160px;padding:0 4px;border-bottom:1px solid var(--border-color)}
 .bar-g{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;height:100%;justify-content:flex-end;min-width:0}
 .bar{border-radius:2px 2px 0 0;min-height:1px;width:100%;max-width:14px}
-.bar-l{font-size:7px;color:var(--text-muted);margin-top:3px;text-align:center}
-
+.bar-l{font-size:7px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+.donut{width:140px;height:140px;border-radius:50%;position:relative}
+.donut::after{content:'';position:absolute;top:25%;left:25%;width:50%;height:50%;border-radius:50%;background:var(--bg-card)}
+.donut-w{display:flex;align-items:center;gap:10px}
+.dlg{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.ddot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.cr{margin-bottom:8px}
+.crh{display:flex;justify-content:space-between;margin-bottom:2px}
+.crn{font-size:11px;font-weight:500;color:var(--text-main)}
+.crv{font-size:11px;font-weight:600}
+.crt{height:4px;background:var(--bg-input);border-radius:2px;overflow:hidden}
+.crf{height:100%;border-radius:2px}
+.crs{font-size:9px;color:var(--text-muted);display:flex;justify-content:space-between;margin-top:1px}
+.sbox{background:linear-gradient(135deg,rgba(13,148,136,0.1),rgba(16,185,129,0.08));border:1px solid rgba(13,148,136,0.3);border-radius:12px;padding:14px;margin-bottom:12px}
+.sbt{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.sr{display:flex;justify-content:space-between;padding:3px 0;font-size:12px}
 .dc{background:var(--bg-card);border-radius:10px;padding:9px 11px;margin-bottom:5px;border:1px solid var(--border-color)}
-.dr{display:flex;justify-content:space-between;align-items:center}
-.dtt{font-size:12px;font-weight:600;color:var(--text-main)}
-.da{font-size:13px;font-weight:700;}
-.tl{color:var(--accent)}.or{color:#f97316}.gn{color:#34d399}.rd{color:#f87171}
-
+.dr{display:flex;justify-content:space-between;align-items:flex-start}
+.dtt{font-size:11px;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm{font-size:9px;color:var(--text-muted);margin-top:2px;display:flex;gap:5px;align-items:center}
+.dbg{padding:1px 6px;border-radius:10px;font-size:8px;font-weight:500;color:#fff}
+.da{font-size:13px;font-weight:700;margin-right:8px;white-space:nowrap}
+.si{width:100%;padding:9px 12px;border-radius:9px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-main);font-size:12px;font-family:inherit;outline:none;margin-bottom:6px}
+.fr{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.fp{padding:3px 8px;border-radius:14px;border:1px solid var(--border-color);font-size:9px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub)}
+.fp.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cn{font-size:10px;color:var(--text-muted);margin-bottom:6px}
+.tabs{display:flex;background:var(--bg-input);border-radius:10px;padding:3px;margin-bottom:12px}
+.tab{flex:1;padding:8px 0;border-radius:8px;border:none;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;background:transparent;color:var(--text-muted)}
+.tab.on{background:rgba(255,255,255,0.1);color:var(--accent)}
+[data-theme="light"] .tab.on{background:#fff;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+.rec{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color)}
+.rec:last-child{border-bottom:none}
+.rct{font-size:11px;font-weight:500;color:var(--text-main)}
+.rcm{font-size:9px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:4px}
+.rca{font-size:13px;font-weight:700;white-space:nowrap;margin-right:8px}
+.scr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border-color);font-size:11px}
+.yr{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color)}
+.yrl{font-size:15px;font-weight:700;color:var(--accent)}
+.yrd{text-align:left;font-size:12px}
+.line-w{width:100%;height:150px}
+.line-w svg{width:100%;height:100%}
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 0;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999}
-.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:3px 8px;color:var(--text-muted)}
-.nb.on{color:var(--accent)}
+.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:3px 8px}
+.nb .ic{font-size:18px}.nb .lb{font-size:8px;font-weight:500}
+.nb.on{color:var(--accent)}.nb.off{color:var(--text-muted)}
 .pg{display:none}.pg.show{display:block}
+.upd{font-size:9px;color:var(--text-muted);text-align:center;padding:8px}
 </style>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -107,162 +162,485 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 
 <div id="googleLoginScreen">
     <div class="l-box">
-        <div class="l-ttl">REL - Business</div>
+        <div class="l-ttl">REL Management</div>
         <div class="l-sub">כניסה מאובטחת למערכת ניהול האירועים.</div>
-        <div id="g_id_onload" data-client_id="943081015380-nhhrgi95qj8lhlt783ie62lvjfvau6cs.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
-        <div class="g_id_signin" data-type="standard"></div>
+        <div class="g-btn-wrapper">
+            <div id="g_id_onload"
+                 data-client_id="943081015380-nhhrgi95qj8lhlt783ie62lvjfvau6cs.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
+        </div>
     </div>
 </div>
 
 <div id="mainApp" style="display:none">
-<div class="loader" id="loader"><div class="spinner"></div><div class="loader-txt">טוען נתונים...</div></div>
+
+<div class="loader" id="loader">
+<div class="spinner"></div>
+<div class="loader-txt">טוען נתונים מגוגל שיטס...</div>
+<div class="loader-err" id="loadErr"></div>
+</div>
 
 <div class="hdr">
     <div class="hdr-r">
         <div><div class="lg">REL Management</div><div class="lg-s">פרויקט אירועים</div></div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;align-items:center;gap:4px">
             <button class="ref-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
             <button class="ref-btn" onclick="loadData()">🔄</button>
+            <div class="plb" id="pLbl"></div>
         </div>
     </div>
+</div>
+
+<div class="dba">
+<label>מ:</label><input type="date" class="di" id="sd">
+<label>עד:</label><input type="date" class="di" id="ed">
+<button class="abtn" onclick="apply()">סנן</button>
+<div class="prw" id="pres"></div>
 </div>
 
 <div class="ct">
-    <div id="pgS" class="pg show">
-        <div class="kg" id="kpis"></div>
-        <div class="cd"><div class="ttt">רווח נקי שנתי</div><div id="mCh" class="bars"></div></div>
-        <div class="cd" id="fullSummary"></div>
-    </div>
+<div id="pgS" class="pg show">
+<div class="kg" id="kpis"></div>
+<div class="sbox" id="sBox"></div>
+<div class="cd"><div class="ttt">הכנסות vs הוצאות (לתקופה)</div><div id="mCh" class="bars"></div></div>
+<div class="cd"><div class="ttt">פילוח הכנסות לפי קטגוריה</div><div class="donut-w"><div class="donut" id="donut"></div><div id="piLg" style="flex:1"></div></div></div>
+<div class="cd"><div class="ttt">טופ הוצאות לפי קטגוריה</div><div id="eCats"></div></div>
+<div class="upd" id="updTime"></div>
+</div>
 
-    <div id="pgD" class="pg">
-        <div class="cd"><div class="ttt">💡 תובנות חכמות</div><div id="insightsBox"></div></div>
-        <div class="cd"><div class="ttt">היסטוריית חודשים</div><div id="historyList"></div></div>
-    </div>
+<div id="pgD" class="pg">
+<div class="cd"><div class="ttt">רווח חודשי</div><div class="line-w" id="profCh"></div></div>
+<div class="cd"><div class="ttt">השוואה שנתית</div><div id="yrComp"></div></div>
+<div class="cd"><div class="ttt">הכנסות אחרונות בתקופה</div><div id="recList"></div></div>
+</div>
 
-    <div id="pgI" class="pg">
-        <div class="cd"><div class="ttt">הוספת אירוע חדש</div>
-            <div class="inp-g"><label class="inp-l">תאריך</label><input type="date" class="inp" id="nDate"></div>
-            <div class="inp-g"><label class="inp-l">שם אמן / אירוע</label><input type="text" class="inp" id="nArtist" placeholder="מי מופיע?"></div>
-            <div class="inp-g"><label class="inp-l">מיקום</label><input type="text" class="inp" id="nLoc" placeholder="איפה?"></div>
-            <div class="inp-g"><label class="inp-l">סוג מע״מ</label><select class="inp" id="nVat"><option value="רגיל">רגיל</option><option value="פטור">פטור</option></select></div>
-            <div class="inp-g"><label class="inp-l">סכום לפני מע״מ</label><input type="number" class="inp" id="nAmt" placeholder="0"></div>
-            <button class="inp" style="background:var(--accent);color:white;font-weight:700;border:none" onclick="saveData()">שמור אירוע</button>
-        </div>
-    </div>
+<div id="pgI" class="pg">
+<div class="cd"><div class="ttt">תתי קטגוריות הכנסה</div><div id="subC"></div></div>
+<input class="si" id="iSr" placeholder="🔍 חיפוש הכנסות..." oninput="rInc()">
+<div id="sumI" class="summary-dash"></div>
+<div class="fr" id="iCh"></div><div class="cn" id="iCn"></div><div id="iLs"></div>
+<button class="fab" onclick="oMod()">+</button>
+</div>
+
+<div id="pgE" class="pg">
+<input class="si" id="eSr" placeholder="🔍 חיפוש הוצאות..." oninput="rExp()">
+<div id="sumE" class="summary-dash"></div>
+<div class="fr" id="eCh"></div><div class="cn" id="eCn"></div><div id="eLs"></div>
+<button class="fab exp" onclick="oMod()">+</button>
+</div>
+
+<div id="pgT" class="pg">
+<div class="cd">
+    <div class="ttt">💡 תובנות חכמות (לתקופה הנבחרת)</div>
+    <div id="insightsBox"></div>
+</div>
+<div class="tabs"><button class="tab on" id="tI" onclick="setTT('i')">הכנסות</button><button class="tab" id="tE" onclick="setTT('e')">הוצאות</button></div>
+<input class="si" id="tSr" placeholder="🔍 חיפוש..." oninput="rTbl()">
+<div id="sumT" class="summary-dash"></div>
+<div class="fr" id="tCh"></div><div class="cn" id="tCn"></div><div id="tLs"></div>
+</div>
+</div>
+
+<div class="modal" id="addMod">
+<div class="m-box">
+<div class="m-tl" id="modTl">הוספת אירוע חדש</div>
+<div class="inp-g"><label class="inp-l">תאריך</label><input type="date" class="inp" id="nDate"></div>
+<div class="inp-g"><label class="inp-l">שם האמן / אירוע</label><input type="text" class="inp" id="nArtist" placeholder="מי מופיע?"></div>
+<div class="inp-g"><label class="inp-l">תיאור (אופציונלי)</label><input type="text" class="inp" id="nDesc" placeholder="תיאור האירוע"></div>
+<div class="inp-g"><label class="inp-l">מיקום</label><input type="text" class="inp" id="nLoc" placeholder="איפה?"></div>
+<div class="inp-g"><label class="inp-l">סוג מע״מ</label><select class="inp" id="nVat"><option value="רגיל">מע"מ רגיל (17%)</option><option value="פטור">פטור</option></select></div>
+<div class="inp-g"><label class="inp-l">סכום לפני מע״מ</label><input type="number" class="inp" id="nAmt" placeholder="0"></div>
+
+<div class="m-acts">
+<button class="btn btn-c" onclick="cMod()">ביטול</button>
+<button class="btn btn-s" id="sBtn" onclick="saveData()">שמור אירוע</button>
+</div>
+</div>
 </div>
 
 <div class="nav">
-    <button class="nb on" id="n0" onclick="go('S')">📊 סיכום</button>
-    <button class="nb off" id="n1" onclick="go('D')">📈 תובנות</button>
-    <button class="nb off" id="n2" onclick="go('I')">➕ הוספה</button>
+<button class="nb on" id="n0" onclick="go('S')"><span class="ic">📊</span><span class="lb">סיכום</span></button>
+<button class="nb off" id="n1" onclick="go('D')"><span class="ic">📈</span><span class="lb">דשבורד</span></button>
+<button class="nb off" id="n2" onclick="go('I')"><span class="ic">💰</span><span class="lb">הכנסות</span></button>
+<button class="nb off" id="n3" onclick="go('E')"><span class="ic">💸</span><span class="lb">הוצאות</span></button>
+<button class="nb off" id="n4" onclick="go('T')"><span class="ic">📋</span><span class="lb">נתונים</span></button>
 </div>
+
 </div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwaISO7HN3efiEnT6TOG6EA4kH9pZbupL9851qLBttGU0CcCToiMhkJ2NCCSCWVpiQ7nQ/exec";
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPtRqvwEmfwI4ePjdlg0s8jYcLhCMyWNWWomaOPinnfGlP8-YoAg5RxR02_HXgXpK4rdPqOQmxEm3I/pub?gid=1566301765&single=true&output=csv";
 
-let fullData = [];
+const IC=['#14b8a6','#f97316','#3b82f6','#a78bfa','#ec4899','#eab308'];
+const EC=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#6366f1','#d946ef','#14b8a6','#f43f5e'];
+const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'];
+const CC={'אירועים':'#14b8a6','משרד':'#3b82f6','משכורות':'#a78bfa','מיסים':'#f97316'};
+
+let D={ir:[],er:[]};
+let s1='',s2='',curPg='S',iCt='הכל',eCt='הכל',tT='i',tCt='הכל',eSh=50,tSh=50;
 
 async function handleCredentialResponse(response) {
-    const payload = JSON.parse(atob(response.credential.split('.')[1]));
-    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "checkAuth", email: payload.email }) });
-    const auth = await res.text();
-    if (auth.trim() === "authorized") {
-        localStorage.setItem('auth_rel_full', 'true');
-        location.reload();
-    } else { alert("גישה נדחתה"); }
+    const responsePayload = JSON.parse(atob(response.credential.split('.')[1]));
+    const userEmail = responsePayload.email;
+
+    const loader = document.createElement('div');
+    loader.innerHTML = '<div style="text-align:center;"><div class="spinner" style="margin:0 auto 15px auto;border-top-color:#14b8a6;"></div><div style="font-weight:600;font-size:16px;">מאמת הרשאות מול גוגל שיטס...</div><div style="font-size:12px;color:#94a3b8;margin-top:5px;">'+userEmail+'</div></div>';
+    loader.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.95);color:white;display:flex;align-items:center;justify-content:center;z-index:100000;font-family:Rubik,sans-serif;';
+    document.body.appendChild(loader);
+
+    try {
+        const checkReq = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "checkAuth", email: userEmail })
+        });
+        const result = await checkReq.text();
+
+        if (result.trim() === "authorized") {
+            localStorage.setItem('auth_ok', 'true');
+            localStorage.setItem('auth_time', new Date().getTime());
+            localStorage.setItem('user_email', userEmail);
+            location.reload(); 
+        } else {
+            throw new Error("unauthorized");
+        }
+    } catch (error) {
+        alert("גישה נדחתה! המייל " + userEmail + " אינו מורשה להיכנס.");
+        loader.remove();
+        google.accounts.id.disableAutoSelect();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if(localStorage.getItem('theme') === 'light') {
+        document.getElementById('themeBtn').textContent = '🌙';
+    }
+    const savedAuth = localStorage.getItem('auth_ok');
+    const authTime = localStorage.getItem('auth_time');
+    const now = new Date().getTime();
+    if (savedAuth === 'true' && authTime && (now - parseInt(authTime) < 24 * 60 * 60 * 1000)) {
+        showApp();
+    } else {
+        document.getElementById('googleLoginScreen').style.display = 'flex';
+    }
+});
+
+function showApp() {
+    document.getElementById('googleLoginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    loadData();
 }
 
 function toggleTheme() {
     const isLight = document.body.getAttribute('data-theme') === 'light';
-    document.body.setAttribute('data-theme', isLight ? 'dark' : 'light');
-    document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+    if(isLight){
+        document.body.removeAttribute('data-theme');
+        document.getElementById('themeBtn').textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.body.setAttribute('data-theme', 'light');
+        document.getElementById('themeBtn').textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
 }
 
-async function loadData() {
-    document.getElementById('loader').classList.remove('hide');
-    try {
-        const res = await fetch(CSV_URL);
-        const text = await res.text();
-        const rows = text.split('\n').map(r => r.split(',')).filter(r => r[0] && r[0] !== 'חודש');
-        fullData = rows;
-        renderAll();
-        document.getElementById('loader').classList.add('hide');
-    } catch(e) { alert("שגיאה בטעינה"); }
+function triggerCelebration() {
+    if(typeof confetti !== 'undefined') { confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } }); }
 }
 
-function renderAll() {
-    const parseNum = (v) => parseFloat((v||'0').replace(/[₪,%\s]/g, "")) || 0;
-    const current = fullData[fullData.length - 1];
+function fmt(n){return '₪'+Math.round(n).toLocaleString('he-IL')}
+function fK(n){return n>=1e6?'₪'+(n/1e6).toFixed(1)+'M':n>=1e3?'₪'+Math.round(n/1000)+'K':'₪'+n}
+function inR(d){return d>=s1&&d<=s2}
+function gF(){return{inc:D.ir.filter(r=>inR(r.d)),exp:D.er.filter(r=>inR(r.d))}}
+function gMC(){return Math.max(1,Math.round((new Date(s2)-new Date(s1))/(30.44*864e5)))}
+
+function parseCSV(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+  const rows=[];
+  for(let i=0;i<lines.length;i++){
+    const cells=[];let cur='',inQ=false;
+    for(let j=0;j<lines[i].length;j++){
+      const c=lines[i][j];
+      if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){cells.push(cur.trim());cur=''}else{cur+=c}
+    }
+    cells.push(cur.trim());
+    rows.push(cells);
+  }
+  return rows;
+}
+
+async function loadData(){
+  document.getElementById('loader').classList.remove('hide');
+  document.getElementById('loadErr').textContent='';
+  try{
+    const res=await fetch(CSV_URL);
+    if(!res.ok) throw new Error('שגיאה בטעינה');
+    const text=await res.text();
     
-    // KPIs
-    document.getElementById('kpis').innerHTML = `
-        <div class="kp"><div class="kl">הכנסות החודש</div><div class="kv tl">₪${parseNum(current[1]).toLocaleString()}</div></div>
-        <div class="kp"><div class="kl">רווח נקי</div><div class="kv gn">₪${parseNum(current[7]).toLocaleString()}</div></div>
+    const rows=parseCSV(text);
+    const income=[],expenses=[];
+    const monthMap = {'ינואר':'01','פברואר':'02','מרץ':'03','אפריל':'04','מאי':'05','יוני':'06','יולי':'07','אוגוסט':'08','ספטמבר':'09','אוקטובר':'10','נובמבר':'11','דצמבר':'12'};
+
+    // מנוע התרגום לנתוני REL
+    for(let i=1;i<rows.length;i++){
+      const r=rows[i];
+      if(!r[0] || r[0].includes('סה"כ')) continue;
+      const mStr = r[0].trim();
+      if(!monthMap[mStr]) continue;
+
+      const d = `2026-${monthMap[mStr]}-01`;
+
+      const incAmt = parseFloat((r[1]||'').replace(/[,₪\s]/g,''));
+      if(!isNaN(incAmt) && incAmt>0){
+        income.push({d, a:Math.round(incAmt), s:'הכנסות אירועים - '+mStr, p:'', c:'אירועים', sc:''});
+      }
+
+      const expEvent = parseFloat((r[2]||'').replace(/[,₪\s]/g,''));
+      if(!isNaN(expEvent) && expEvent>0) expenses.push({d, a:Math.round(expEvent), s:'הוצאות אירועים - '+mStr, c:'אירועים'});
+
+      const expOffice = parseFloat((r[4]||'').replace(/[,₪\s]/g,''));
+      if(!isNaN(expOffice) && expOffice>0) expenses.push({d, a:Math.round(expOffice), s:'הוצאות משרד קבועות', c:'משרד'});
+
+      const expSalaries = parseFloat((r[5]||'').replace(/[,₪\s]/g,''));
+      if(!isNaN(expSalaries) && expSalaries>0) expenses.push({d, a:Math.round(expSalaries), s:'משכורות עובדים', c:'משכורות'});
+
+      const expTaxes = parseFloat((r[6]||'').replace(/[,₪\s]/g,''));
+      if(!isNaN(expTaxes) && expTaxes>0) expenses.push({d, a:Math.round(expTaxes), s:'מיסים', c:'מיסים'});
+    }
+
+    income.sort((a,b)=>b.d.localeCompare(a.d));
+    expenses.sort((a,b)=>b.d.localeCompare(a.d));
+    D={ir:income,er:expenses};
+    
+    document.getElementById('updTime').textContent='עודכן: '+new Date().toLocaleString('he-IL');
+    document.getElementById('loader').classList.add('hide');
+    init();
+  }catch(e){
+    document.getElementById('loadErr').textContent=e.message;
+  }
+}
+
+function init(){
+  s1 = '2026-01-01';
+  s2 = '2026-12-31';
+  document.getElementById('sd').value = s1;
+  document.getElementById('ed').value = s2;
+  const P=[
+    {l:'רבעון 1',s:'2026-01-01',e:'2026-03-31'},
+    {l:'מחצית',s:'2026-01-01',e:'2026-06-30'},
+    {l:'2026 (הכל)',s:'2026-01-01',e:'2026-12-31'}
+  ];
+  document.getElementById('pres').innerHTML=P.map(p=>`<button class="pb" onclick="sP(this,'${p.s}','${p.e}')">${p.l}</button>`).join('');
+  apply();
+}
+
+function sP(el,a,b){document.querySelectorAll('.pb').forEach(x=>x.classList.remove('on'));el.classList.add('on');document.getElementById('sd').value=a;document.getElementById('ed').value=b;apply();}
+function apply(){s1=document.getElementById('sd').value;s2=document.getElementById('ed').value;document.getElementById('pLbl').textContent=new Date(s1).toLocaleDateString('he-IL')+' - '+new Date(s2).toLocaleDateString('he-IL');iCt='הכל';eCt='הכל';tCt='הכל';eSh=50;tSh=50;renderAll();}
+
+function updateSummaryDash(elId, arr) {
+    const total = arr.reduce((sum, item) => sum + item.a, 0);
+    const count = arr.length;
+    const avg = count > 0 ? total / count : 0;
+    
+    document.getElementById(elId).innerHTML = `
+        <div><div class="sd-ttl">סה״כ</div><div class="sd-val ${elId==='sumI'?'gn':elId==='sumE'?'or':'tl'}">${fmt(total)}</div></div>
+        <div style="border-right:1px solid var(--border-color); border-left:1px solid var(--border-color);"><div class="sd-ttl">פעולות</div><div class="sd-val">${count}</div></div>
+        <div><div class="sd-ttl">ממוצע</div><div class="sd-val">${fmt(avg)}</div></div>
     `;
-
-    // Bar Chart
-    const maxVal = Math.max(...fullData.map(r => Math.abs(parseNum(r[7]))), 1);
-    let bars = '';
-    fullData.forEach(r => {
-        const val = parseNum(r[7]);
-        const h = (Math.abs(val) / maxVal) * 140;
-        bars += `<div class="bar-g"><div class="bar" style="height:${h}px; background:${val>=0?'#14b8a6':'#f87171'}"></div><div class="bar-l">${r[0].slice(0,3)}</div></div>`;
-    });
-    document.getElementById('mCh').innerHTML = bars;
-
-    // Insights
-    let insights = `<div class="insight-item">החודש הרווחת <b>₪${parseNum(current[7]).toLocaleString()}</b> נקי.</div>`;
-    if(parseNum(current[7]) > parseNum(fullData[fullData.length-2][7])) {
-        insights += `<div class="insight-item" style="border-right-color:#34d399">מגמת שיפור! הרווח גבוה יותר מחודש שעבר.</div>`;
-    }
-    document.getElementById('insightsBox').innerHTML = insights;
-
-    // Full Detail
-    let det = `<div class="ttt">פירוט מלא - ${current[0]}</div>`;
-    const labs = ["הכנסות", "הוצאות אירועים", "רווח גולמי", "משרד", "משכורות", "מיסים", "רווח נקי"];
-    labs.forEach((l, i) => {
-        det += `<div class="dr" style="padding:10px 0; border-bottom:1px solid var(--border-color)"><span>${l}</span><span style="font-weight:700">${current[i+1]}</span></div>`;
-    });
-    document.getElementById('fullSummary').innerHTML = det;
 }
 
-async function saveData() {
-    const data = {
-        type: 'event',
-        date: document.getElementById('nDate').value,
-        artist: document.getElementById('nArtist').value,
-        location: document.getElementById('nLoc').value,
-        vatType: document.getElementById('nVat').value,
-        amountBefore: document.getElementById('nAmt').value
-    };
-    if(!data.date || !data.amountBefore) return alert("מלא תאריך וסכום");
+function generateInsights(inc, exp) {
+    const sumI = inc.reduce((s, r) => s + r.a, 0);
+    const sumE = exp.reduce((s, r) => s + r.a, 0);
+    let insights = [];
     
-    const btn = event.target;
-    btn.disabled = true; btn.innerText = "שומר...";
+    if (sumI > sumE && sumE > 0) insights.push(`המצב מעולה! ההכנסות שלך גבוהות מההוצאות בתקופה זו ב-<b>${fmt(sumI - sumE)}</b>.`);
+    if (sumE > sumI) insights.push(`שים לב: בתקופה זו ההוצאות עלו על ההכנסות ב-<b>${fmt(sumE - sumI)}</b>.`);
     
-    try {
-        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        alert("נשמר בהצלחה!");
-        location.reload();
-    } catch(e) { alert("שגיאה"); btn.disabled = false; btn.innerText = "שמור אירוע"; }
+    const cats = {}; exp.forEach(r => { cats[r.c] = (cats[r.c]||0) + r.a; });
+    const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+    if (topCat) insights.push(`ההוצאה הגדולה ביותר שלך היא על <b>${topCat[0]}</b> (סך הכל ${fmt(topCat[1])}).`);
+    
+    const html = insights.map(txt => `<div class="insight-item">${txt}</div>`).join('');
+    document.getElementById('insightsBox').innerHTML = html || '<div style="font-size:12px;color:var(--text-muted);padding:10px;">אין מספיק נתונים להפקת תובנות.</div>';
 }
 
-function go(p) {
-    document.querySelectorAll('.pg').forEach(x => x.classList.remove('show'));
-    document.getElementById('pg'+p).classList.add('show');
-    document.querySelectorAll('.nb').forEach((b,i) => b.classList.toggle('on', b.id === 'n'+(['S','D','I'].indexOf(p))));
+function renderAll(){
+  const{inc,exp}=gF();
+  const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
+  
+  generateInsights(inc, exp);
+  
+  document.getElementById('kpis').innerHTML=`
+    <div class="kp"><div class="kl">סה״כ הכנסות</div><div class="kv tl">${fK(ti)}</div></div>
+    <div class="kp"><div class="kl">סה״כ הוצאות</div><div class="kv or">${fK(te)}</div></div>
+    <div class="kp"><div class="kl">רווח לתקופה</div><div class="kv ${pr>=0?'gn':'rd'}">${fK(pr)}</div></div>
+    <div class="kp"><div class="kl">ממוצע חודשי</div><div class="kv bl">${fK(ti/gMC())}</div></div>`;
+  const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
+  let sb='<div class="sbt">סיכום הכנסות לתקופה</div>';
+  Object.entries(icBC).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{sb+=`<div class="sr"><span>${k}</span><span class="tl">${fmt(v)}</span></div>`;});
+  sb+=`<div class="sr" style="border-top:2px solid var(--border-color);margin-top:4px;padding-top:4px"><span style="font-weight:700">סה״כ</span><span class="tl" style="font-weight:700;font-size:15px">${fmt(ti)}</span></div>`;
+  document.getElementById('sBox').innerHTML=sb;
+  rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);rDash(inc,exp);rInc();rExp();rTbl();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('auth_rel_full') === 'true') {
-        document.getElementById('googleLoginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        loadData();
-    }
-});
+function rBar(inc,exp){
+  const mo={};
+  let start = new Date(s1), end = new Date(s2);
+  while(start <= end){
+    const m = start.toISOString().slice(0,7);
+    mo[m] = {i:0, e:0};
+    start.setMonth(start.getMonth() + 1);
+  }
+  inc.forEach(r=>{const m=r.d.slice(0,7); if(mo[m]) mo[m].i+=r.a});
+  exp.forEach(r=>{const m=r.d.slice(0,7); if(mo[m]) mo[m].e+=r.a});
+  const ks=Object.keys(mo).sort(),mx=Math.max(...ks.map(k=>Math.max(mo[k].i,mo[k].e)),1);
+  let h='';ks.forEach(k=>{
+    const hi=Math.max(1,(mo[k].i/mx)*140),he=Math.max(1,(mo[k].e/mx)*140);
+    h+=`<div class="bar-g"><div style="display:flex;gap:1px;align-items:flex-end;height:140px;width:100%"><div class="bar" style="height:${hi}px;background:#14b8a6;flex:1"></div><div class="bar" style="height:${he}px;background:#f97316;flex:1"></div></div><div class="bar-l">${MH[+k.split('-')[1]-1]}${ks.length>12?' '+k.slice(2,4):''}</div></div>`;
+  });document.getElementById('mCh').innerHTML=h;
+}
+
+function rDonut(cats,total){
+  const ar=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  let deg=0,grad='';
+  ar.forEach((c,i)=>{const p=total>0?c[1]/total*360:0;grad+=`${IC[i%IC.length]} ${deg}deg ${deg+p}deg,`;deg+=p;});
+  document.getElementById('donut').style.background=ar.length?`conic-gradient(${grad.slice(0,-1)})`:'var(--bg-card)';
+  let lg='';ar.forEach((c,i)=>{const p=total>0?(c[1]/total*100).toFixed(1):0;lg+=`<div class="dlg"><div class="ddot" style="background:${IC[i%IC.length]}"></div><div><div style="font-size:10px;font-weight:500;color:var(--text-main)">${c[0]}</div><div style="font-size:9px;color:var(--text-muted)">${fmt(c[1])} (${p}%)</div></div></div>`;});
+  document.getElementById('piLg').innerHTML=lg;
+}
+
+function rExpC(exp,total){
+  const cats={};exp.forEach(r=>{const c=r.c||'אחר';if(!cats[c])cats[c]={t:0,n:0};cats[c].t+=r.a;cats[c].n++});
+  const ar=Object.entries(cats).sort((a,b)=>b[1].t-a[1].t),mx=ar[0]?ar[0][1].t:1;
+  let h='';ar.slice(0,12).forEach(([k,v],i)=>{
+    h+=`<div class="cr"><div class="crh"><span class="crn">${k}</span><span class="crv or">${fK(v.t)}</span></div><div class="crt"><div class="crf" style="width:${v.t/mx*100}%;background:${EC[i%EC.length]}"></div></div><div class="crs"><span>${v.n} פעולות</span><span>${total>0?(v.t/total*100).toFixed(1):0}%</span></div></div>`;
+  });document.getElementById('eCats').innerHTML=h;
+}
+
+function rDash(inc,exp){
+  const mo={};
+  inc.forEach(r=>{const m=r.d.slice(0,7);mo[m]=mo[m]||{i:0,e:0};mo[m].i+=r.a});
+  exp.forEach(r=>{const m=r.d.slice(0,7);mo[m]=mo[m]||{i:0,e:0};mo[m].e+=r.a});
+  const ks=Object.keys(mo).sort();
+  if(ks.length>0){
+    const pts=ks.map(k=>mo[k].i-mo[k].e);
+    const mn=Math.min(...pts,0),mx=Math.max(...pts,1),rng=mx-mn||1;
+    const w=100,hh=130,pad=10;
+    let path='',dots='',labels='';
+    pts.forEach((v,i)=>{const x=pad+(i/Math.max(1,pts.length-1))*(w-2*pad);const y=hh-pad-((v-mn)/rng)*(hh-2*pad);
+      path+=(i===0?'M':'L')+` ${x} ${y}`;dots+=`<circle cx="${x}" cy="${y}" r="2" fill="#34d399"/>`;});
+    const lp=pts.map((v,i)=>({x:pad+(i/Math.max(1,pts.length-1))*(w-2*pad),y:hh-pad-((v-mn)/rng)*(hh-2*pad)}));
+    const area=path+` L ${lp[lp.length-1].x} ${hh-pad} L ${lp[0].x} ${hh-pad} Z`;
+    ks.forEach((k,i)=>{const x=pad+(i/Math.max(1,ks.length-1))*(w-2*pad);labels+=`<text x="${x}" y="${hh-1}" text-anchor="middle" fill="var(--text-muted)" font-size="2.5" font-family="Rubik">${MH[+k.split('-')[1]-1]}</text>`;});
+    let zl='';if(mn<0){const zy=hh-pad-((0-mn)/rng)*(hh-2*pad);zl=`<line x1="${pad}" y1="${zy}" x2="${w-pad}" y2="${zy}" stroke="rgba(148,163,184,0.3)" stroke-width="0.3" stroke-dasharray="1,1"/>`;}
+    document.getElementById('profCh').innerHTML=`<svg viewBox="0 0 ${w} ${hh}" preserveAspectRatio="none">${zl}<path d="${area}" fill="rgba(52,211,153,0.1)"/><path d="${path}" fill="none" stroke="#34d399" stroke-width="1"/>${dots}${labels}</svg>`;
+  }
+
+  const yrs={};D.ir.forEach(r=>{const y=r.d.slice(0,4);yrs[y]=yrs[y]||{i:0,e:0};yrs[y].i+=r.a});
+  D.er.forEach(r=>{const y=r.d.slice(0,4);yrs[y]=yrs[y]||{i:0,e:0};yrs[y].e+=r.a});
+  let yh='';Object.keys(yrs).sort().forEach(y=>{const p=yrs[y].i-yrs[y].e;
+    yh+=`<div class="yr"><div class="yrl">${y}</div><div class="yrd">הכנסות: <span class="tl" style="font-weight:600">${fK(yrs[y].i)}</span><br>הוצאות: <span class="or" style="font-weight:600">${fK(yrs[y].e)}</span><br>רווח: <span class="${p>=0?'gn':'rd'}" style="font-weight:600">${fK(p)}</span></div></div>`;
+  });document.getElementById('yrComp').innerHTML=yh;
+
+  let rh='';inc.slice(0,10).forEach(r=>{const bg=CC[r.c]||'var(--text-muted)';
+    rh+=`<div class="rec"><div style="flex:1"><div class="rct">${r.s}</div><div class="rcm"><span class="dbg" style="background:${bg}">${r.c}</span><span>${r.d}</span></div></div><div class="rca gn">${fmt(r.a)}</div></div>`;
+  });document.getElementById('recList').innerHTML=rh||'<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:11px">אין הכנסות</div>';
+}
+
+function mkC(r,t){
+  const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',bg=t==='i'?(CC[r.c]||'var(--text-muted)'):'#f97316';
+  return `<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${r.s}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${bg}">${r.c}</span></div></div><div class="da ${col}">${sg}${fmt(r.a)}</div></div></div>`;
+}
+
+function rInc(){
+  const{inc}=gF();
+  const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
+  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt='${c}';rInc()">${c}</button>`).join('');
+  
+  const q=(document.getElementById('iSr').value||'').toLowerCase();
+  const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.s.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
+  
+  updateSummaryDash('sumI', fl);
+  
+  document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
+  document.getElementById('iLs').innerHTML=fl.map(r=>mkC(r,'i')).join('');
+}
+
+function rExp(){
+  const{exp}=gF();
+  const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort().slice(0,10)];
+  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt='${c}';eSh=50;rExp()">${c}</button>`).join('');
+  const q=(document.getElementById('eSr').value||'').toLowerCase();
+  const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.s.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
+  
+  updateSummaryDash('sumE', fl);
+
+  document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
+  let h=fl.slice(0,eSh).map(r=>mkC(r,'e')).join('');
+  if(fl.length>eSh)h+=`<button class="abtn" style="width:100%;margin-top:8px;padding:10px;font-size:12px" onclick="eSh+=50;rExp()">טען עוד (${Math.min(eSh+50,fl.length)} מתוך ${fl.length})</button>`;
+  document.getElementById('eLs').innerHTML=h;
+}
+
+function setTT(t){tT=t;tCt='הכל';tSh=50;document.getElementById('tI').className='tab '+(t==='i'?'on':'');document.getElementById('tE').className='tab '+(t==='e'?'on':'');rTbl();}
+
+function rTbl(){
+  const{inc,exp}=gF(),recs=tT==='i'?inc:exp;
+  const cats=['הכל',...[...new Set(recs.map(r=>r.c).filter(Boolean))].sort().slice(0,10)];
+  document.getElementById('tCh').innerHTML=cats.map(c=>`<button class="fp ${tCt===c?'on':''}" onclick="tCt='${c}';tSh=50;rTbl()">${c}</button>`).join('');
+  const q=(document.getElementById('tSr').value||'').toLowerCase();
+  const fl=recs.filter(r=>(tCt==='הכל'||r.c===tCt)&&(!q||r.s.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
+  
+  updateSummaryDash('sumT', fl);
+
+  document.getElementById('tCn').textContent=fl.length+' תוצאות';
+  let h=fl.slice(0,tSh).map(r=>mkC(r,tT)).join('');
+  if(fl.length>tSh)h+=`<button class="abtn" style="width:100%;margin-top:8px;padding:10px;font-size:12px" onclick="tSh+=50;rTbl()">טען עוד (${Math.min(tSh+50,fl.length)} מתוך ${fl.length})</button>`;
+  document.getElementById('tLs').innerHTML=h;
+}
+
+function go(p){curPg=p;['S','D','I','E','T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off');});window.scrollTo(0,0);}
+
+function oMod(){
+  document.getElementById('addMod').classList.add('open');
+  document.getElementById('nDate').value=new Date().toISOString().split('T')[0];
+}
+
+function cMod(){document.getElementById('addMod').classList.remove('open');}
+
+async function saveData(){
+  if(!SCRIPT_URL.startsWith("http")){alert("יש בעיה בקישור לסקריפט");return;}
+  
+  const data = {
+      type: 'event',
+      date: document.getElementById('nDate').value,
+      artist: document.getElementById('nArtist').value,
+      description: document.getElementById('nDesc').value,
+      location: document.getElementById('nLoc').value,
+      vatType: document.getElementById('nVat').value,
+      amountBefore: document.getElementById('nAmt').value
+  };
+  
+  if(!data.date || !data.amountBefore){alert('חובה למלא תאריך וסכום'); return;}
+  
+  const btn=document.getElementById('sBtn');
+  btn.disabled=true; btn.textContent='שומר...';
+  
+  triggerCelebration(); 
+  
+  try {
+    await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify(data)});
+    location.reload();
+  } catch(e){ 
+      console.error('Error saving to sheet', e);
+      btn.disabled=false; btn.textContent='שמור אירוע'; 
+  }
+}
 </script>
 </body>
 </html>
