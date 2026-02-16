@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ניהול אירועים - דשבורד עסקי</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap');
+:root {
+    --bg-body: #0f172a; --bg-card: #1e293b; --accent: #14b8a6; --text-main: #f1f5f9; --text-sub: #94a3b8;
+}
+body { background: var(--bg-body); color: var(--text-main); font-family: 'Rubik', sans-serif; direction: rtl; margin: 0; padding-bottom: 80px; }
+.hdr { background: linear-gradient(135deg, #134e4a, #0d9488); padding: 20px; text-align: center; color: white; }
+.ct { padding: 15px; }
+.kg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+.kp { background: var(--bg-card); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+.kl { font-size: 11px; color: var(--text-sub); margin-bottom: 5px; }
+.kv { font-size: 18px; font-weight: 800; }
+.gn { color: #34d399; } .tl { color: #14b8a6; } .or { color: #f97316; }
+.cd { background: var(--bg-card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+.ttt { font-size: 14px; font-weight: 700; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+.row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.bars { display: flex; align-items: flex-end; gap: 5px; height: 150px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.bar-g { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.bar { background: var(--accent); width: 100%; border-radius: 4px 4px 0 0; min-height: 2px; }
+.bar-l { font-size: 9px; color: var(--text-sub); margin-top: 5px; }
+.fab { position: fixed; bottom: 25px; left: 25px; width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; border: none; box-shadow: 0 5px 15px rgba(20,184,166,0.4); cursor: pointer; }
+.modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.9); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 2000; }
+.m-box { background: var(--bg-card); width: 100%; max-width: 400px; border-radius: 16px; padding: 20px; }
+.inp { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; }
+.btn-s { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 8px; color: white; font-weight: 700; }
+#loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<div id="loginScreen">
+    <h2 style="margin-bottom:20px">כניסה למערכת אירועים</h2>
+    <div id="g_id_onload" data-client_id="943081015380-nhhrgi95qj8lhlt783ie62lvjfvau6cs.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
+    <div class="g_id_signin" data-type="standard"></div>
+</div>
+
+<div id="mainApp" style="display:none">
+    <div class="hdr"><h1>ניהול אירועים ומשכורות</h1></div>
+    <div class="ct">
+        <div class="kg" id="topCards"></div>
+        <div class="cd"><div class="ttt">רווח נקי שנתי (חודשי)</div><div id="profitChart" class="bars"></div></div>
+        <div id="monthlyBreakdown"></div>
+    </div>
+    <button class="fab" onclick="document.getElementById('addMod').style.display='flex'">+</button>
+</div>
+
+<div class="modal" id="addMod">
+    <div class="m-box">
+        <h3 style="text-align:center;margin-bottom:15px">הוספת אירוע חדש</h3>
+        <input type="date" class="inp" id="eDate"><input type="text" class="inp" id="eArtist" placeholder="אמן"><input type="text" class="inp" id="eDesc" placeholder="תיאור"><input type="text" class="inp" id="eLoc" placeholder="מיקום">
+        <select class="inp" id="eVat"><option value="רגיל">מע"מ רגיל</option><option value="פטור">פטור</option></select><input type="number" class="inp" id="eAmt" placeholder="סכום לפני מע״מ">
+        <button class="btn-s" onclick="saveEvent()">שמור אירוע</button>
+        <button onclick="document.getElementById('addMod').style.display='none'" style="width:100%;background:none;border:none;color:gray;margin-top:10px">ביטול</button>
+    </div>
+</div>
+
+<script>
+const SCRIPT_URL = "YOUR_APPS_SCRIPT_URL"; // החלף בלינק הסקריפט החדש
+const CSV_URL = "YOUR_CSV_URL"; // החלף בלינק ה-CSV של "סיכום שנתי"
+
+async function handleCredentialResponse(response) {
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "checkAuth", email: payload.email }) });
+    const auth = await res.text();
+    if (auth.trim() === "authorized") {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        loadData();
+    } else { alert("גישה נדחתה"); }
+}
+
+async function loadData() {
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+    const rows = text.split('\n').map(r => r.split(',')).filter(r => r[0] && r[0] !== 'חודש');
+    
+    // ניקוי מספרים
+    const parseNum = (val) => parseFloat((val||'0').replace(/[^0-9.-]/g, "")) || 0;
+
+    // כרטיסיות עליונות (החודש הנוכחי - שורה אחרונה עם נתונים)
+    const validRows = rows.filter(r => parseNum(r[1]) > 0 || parseNum(r[7]) !== 0);
+    const current = validRows[validRows.length - 1];
+    
+    if (current) {
+        document.getElementById('topCards').innerHTML = `
+            <div class="kp"><div class="kl">הכנסות החודש</div><div class="kv gn">₪${parseNum(current[1]).toLocaleString()}</div></div>
+            <div class="kp"><div class="kl">רווח נקי</div><div class="kv tl">₪${parseNum(current[7]).toLocaleString()}</div></div>
+        `;
+        
+        let html = '<div class="cd"><div class="ttt">פירוט חודשי - ' + current[0] + '</div>';
+        const labels = ["הכנסות אירועים", "הוצאות אירועים", "רווח גולמי", "הוצאות משרד", "משכורות עובדים", "מסים", "רווח נקי"];
+        labels.forEach((l, i) => {
+            html += `<div class="row"><span>${l}</span><span style="font-weight:700">${current[i+1]}</span></div>`;
+        });
+        document.getElementById('monthlyBreakdown').innerHTML = html + '</div>';
+    }
+
+    // יצירת הגרף
+    const maxProfit = Math.max(...rows.map(r => Math.abs(parseNum(r[7]))), 1);
+    let chartHtml = '';
+    rows.forEach(r => {
+        const val = parseNum(r[7]);
+        const height = (Math.abs(val) / maxProfit) * 120;
+        chartHtml += `<div class="bar-g"><div class="bar" style="height:${height}px; background:${val>=0?'#34d399':'#f87171'}"></div><div class="bar-l">${r[0].slice(0,3)}</div></div>`;
+    });
+    document.getElementById('profitChart').innerHTML = chartHtml;
+}
+
+async function saveEvent() {
+    const data = {
+        type: 'event',
+        date: document.getElementById('eDate').value,
+        artist: document.getElementById('eArtist').value,
+        description: document.getElementById('eDesc').value,
+        location: document.getElementById('eLoc').value,
+        vatType: document.getElementById('eVat').value,
+        amountBefore: document.getElementById('eAmt').value
+    };
+    const btn = document.querySelector('.btn-s'); btn.disabled = true; btn.innerText = 'שומר...';
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+        alert('האירוע נשמר בהצלחה!'); location.reload();
+    } catch(e) { alert('שגיאה בשמירה'); btn.disabled = false; btn.innerText = 'שמור'; }
+}
+</script>
+</body>
+</html>
