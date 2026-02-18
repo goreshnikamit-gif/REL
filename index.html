@@ -27,7 +27,7 @@
 body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system-ui,sans-serif;direction:rtl;min-height:100vh;overflow-x:hidden;padding-bottom:90px;transition:background 0.3s,color 0.3s}
 ::-webkit-scrollbar{display:none}
 
-/* שכבת המדבקה */
+/* המדבקה שלך */
 #stickerOverlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   display: none; align-items: center; justify-content: center;
@@ -48,125 +48,59 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 #loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg-body);z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
 .l-box{background:var(--bg-card);padding:40px 30px;border-radius:24px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border-color)}
 .l-ttl{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#14b8a6,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.l-sub{font-size:14px;color:var(--text-sub);margin-bottom:24px}
-.l-btn{width:100%;padding:14px;background:white;color:#333;border:none;border-radius:10px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:background 0.2s}
-.l-err{color:#f87171;font-size:12px;margin-bottom:12px;display:none;line-height:1.4}
+.l-btn{width:100%;padding:14px;background:white;color:#333;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
 
 .hdr{background:linear-gradient(135deg,#134e4a,#0d9488,#134e4a);padding:16px;padding-top:calc(16px + env(safe-area-inset-top));position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
 .hdr-r{display:flex;align-items:center;justify-content:space-between}
 .lg{font-size:18px;font-weight:800;color:#fff}
-.lg-s{font-size:10px;color:rgba(255,255,255,0.8)}
-.ref-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:14px;font-family:inherit;cursor:pointer;margin-right:5px}
-.plb{color:rgba(255,255,255,0.9);font-size:11px;font-weight:500}
+.ref-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:14px;cursor:pointer}
 
 .dba{background:var(--bg-card);padding:12px 14px;border-bottom:1px solid var(--border-color);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.dba label{font-size:11px;color:var(--text-sub);font-weight:500}
-.di{border:1px solid var(--border-color);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;color:var(--text-main);background:var(--bg-input);flex:1;min-width:100px;text-align:center}
-.abtn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
-.prw{display:flex;gap:5px;width:100%;margin-top:4px;overflow-x:auto;padding-bottom:2px}
-.pb{padding:4px 9px;border-radius:14px;border:1px solid var(--border-color);font-size:10px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub);white-space:nowrap}
-.pb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.di{border:1px solid var(--border-color);border-radius:8px;padding:7px 10px;font-size:12px;outline:none;color:var(--text-main);background:var(--bg-input);flex:1;text-align:center}
+.abtn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer}
 
 .ct{padding:12px}
 .kg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.kp{background:var(--bg-input);border-radius:12px;padding:12px 14px;flex:1 1 45%;min-width:135px;border:1px solid var(--border-color)}
-.kl{font-size:10px;color:var(--text-sub);margin-bottom:2px;font-weight:500}
-.kv{font-size:20px;font-weight:700;letter-spacing:-0.02em}
-.tl{color:var(--accent)}.or{color:#f97316}.bl{color:#3b82f6}.rd{color:#f87171}.gn{color:#34d399}
+.kp{background:var(--bg-input);border-radius:12px;padding:12px 14px;flex:1 1 45%;border:1px solid var(--border-color)}
+.kl{font-size:10px;color:var(--text-sub);margin-bottom:2px}
+.kv{font-size:20px;font-weight:700}
+.tl{color:var(--accent)}.or{color:#f97316}.gn{color:#34d399}
 
 .cd{background:var(--bg-card);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--border-color)}
 .ttt{font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-main)}
 
-.sbox{background:linear-gradient(135deg,rgba(13,148,136,0.1),rgba(16,185,129,0.08));border:1px solid rgba(13,148,136,0.3);border-radius:12px;padding:14px;margin-bottom:12px}
-.sbt{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
-.sr{display:flex;justify-content:space-between;padding:3px 0;font-size:12px}
-
 .bars{display:flex;align-items:flex-end;gap:3px;height:160px;padding:0 4px;border-bottom:1px solid var(--border-color)}
-.bar-g{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;height:100%;justify-content:flex-end;min-width:0}
-.bar{border-radius:2px 2px 0 0;min-height:1px;width:100%;max-width:14px}
-.bar-l{font-size:7px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+.bar-g{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.bar{border-radius:2px 2px 0 0;width:100%;max-width:14px}
 
-.donut{width:140px;height:140px;border-radius:50%;position:relative}
-.donut::after{content:'';position:absolute;top:25%;left:25%;width:50%;height:50%;border-radius:50%;background:var(--bg-card)}
-.donut-w{display:flex;align-items:center;gap:10px}
-.dlg{display:flex;align-items:center;gap:5px;margin-bottom:5px}
-.ddot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.dc{background:var(--bg-card);border-radius:10px;padding:11px;margin-bottom:6px;border:1px solid var(--border-color)}
+.dr{display:flex;justify-content:space-between;align-items:center}
+.da{font-size:14px;font-weight:700}
 
-.cr{margin-bottom:8px}
-.crh{display:flex;justify-content:space-between;margin-bottom:2px}
-.crn{font-size:11px;font-weight:500;color:var(--text-main)}
-.crv{font-size:11px;font-weight:600}
-.crt{height:4px;background:var(--bg-input);border-radius:2px;overflow:hidden}
-.crf{height:100%;border-radius:2px}
-.crs{font-size:9px;color:var(--text-muted);display:flex;justify-content:space-between;margin-top:1px}
-
-.dc{background:var(--bg-card);border-radius:10px;padding:9px 11px;margin-bottom:5px;border:1px solid var(--border-color)}
-.dr{display:flex;justify-content:space-between;align-items:flex-start}
-.dtt{font-size:11px;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dm{font-size:9px;color:var(--text-muted);margin-top:2px;display:flex;gap:5px;align-items:center}
-.dbg{padding:1px 6px;border-radius:10px;font-size:8px;font-weight:500;color:#fff}
-.da{font-size:13px;font-weight:700;margin-right:8px;white-space:nowrap}
-.act-btn{background:none;border:none;font-size:13px;cursor:pointer;padding:2px 4px;opacity:0.6;transition:opacity 0.2s}
-.act-btn:hover,.act-btn:active{opacity:1}
-
-.summary-dash{display:flex;justify-content:space-between;background:var(--bg-card);padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid var(--border-color);text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.summary-dash>div{flex:1}
-.sd-ttl{font-size:11px;color:var(--text-sub);margin-bottom:4px;font-weight:500}
-.sd-val{font-size:16px;font-weight:800;color:var(--text-main)}
-
-.si{width:100%;padding:9px 12px;border-radius:9px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-main);font-size:12px;font-family:inherit;outline:none;margin-bottom:6px}
-.fr{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
-.fp{padding:3px 8px;border-radius:14px;border:1px solid var(--border-color);font-size:9px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub)}
-.fp.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.cn{font-size:10px;color:var(--text-muted);margin-bottom:6px}
-
-.insight-item{font-size:13px;margin-bottom:8px;padding:10px 12px;background:var(--bg-input);border-radius:8px;border-right:4px solid var(--accent);line-height:1.4}
-
-.fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none;cursor:pointer;transition:transform 0.2s}
+.fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none}
 .fab.exp{background:#f97316;box-shadow:0 4px 12px rgba(249,115,22,0.4)}
-.fab:active{transform:scale(0.95)}
 
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
 .modal.open{display:flex}
-.m-box{background:var(--bg-card);width:100%;max-width:400px;border-radius:16px;padding:20px;border:1px solid var(--border-color);box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
-.m-tl{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-main);text-align:center}
-.inp-g{margin-bottom:12px}
-.inp-l{display:block;font-size:11px;color:var(--text-sub);margin-bottom:4px}
-.inp{width:100%;padding:10px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;font-size:14px;outline:none}
-.cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.cat-chip{padding:6px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:16px;font-size:12px;color:var(--text-sub);cursor:pointer;transition:all 0.2s;font-family:inherit}
-.cat-chip.on{background:var(--accent);border-color:var(--accent);color:white}
-.add-cat-row{display:flex;gap:6px;margin-top:6px}
-.add-cat-row input{flex:1;padding:6px 10px;font-size:12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;outline:none}
-.add-cat-row button{padding:6px 12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-.m-acts{display:flex;gap:10px;margin-top:20px}
-.btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:600;font-family:inherit;cursor:pointer;font-size:14px}
-.btn-c{background:var(--bg-input);color:var(--text-main)}
-.btn-s{background:var(--accent);color:white}
+.m-box{background:var(--bg-card);width:100%;max-width:400px;border-radius:16px;padding:20px;border:1px solid var(--border-color)}
+.inp{width:100%;padding:10px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);margin-bottom:12px;outline:none}
 
-.bio-setup-btn{width:100%;background:var(--bg-input);border:1px solid var(--border-color);color:var(--text-main);padding:12px;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px}
-
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 0;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999}
-.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:3px 8px}
-.nb .ic{font-size:18px}.nb .lb{font-size:8px;font-weight:500}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 0;z-index:9999}
+.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer}
 .nb.on{color:var(--accent)}.nb.off{color:var(--text-muted)}
 
 .pg{display:none}.pg.show{display:block}
-.upd{font-size:9px;color:var(--text-muted);text-align:center;padding:8px}
 </style>
 </head>
 <body>
 
-<div id="stickerOverlay">
-  <img src="https://i.ibb.co/Xf8z1V4/shmoopsie-sticker.png" class="sticker-img">
-</div>
+<div id="stickerOverlay"><img src="https://i.ibb.co/Xf8z1V4/shmoopsie-sticker.png" class="sticker-img"></div>
 
 <div id="bioLockScreen">
   <div class="m-box" style="text-align:center;">
     <div style="font-size:60px;margin-bottom:20px;cursor:pointer;" onclick="unlockBio()">👤</div>
     <div class="l-ttl">ShmoopsiePoo נעול</div>
-    <div class="l-sub">השתמש בזיהוי פנים או טביעת אצבע</div>
-    <button class="btn btn-s" onclick="unlockBio()" style="margin-top:20px; padding:10px 40px;">פתח נעילה</button>
+    <button class="abtn" onclick="unlockBio()" style="padding:10px 40px;">פתח נעילה</button>
   </div>
 </div>
 
@@ -174,37 +108,70 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <div class="l-box">
     <div class="l-ttl">💰 ShmoopsiePoo</div>
     <div class="l-sub">Yael & Amit</div>
-    <div id="loginErr" class="l-err"></div>
-    <button class="l-btn" onclick="doGoogleLogin()">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      התחבר עם גוגל
-    </button>
+    <button class="l-btn" onclick="doGoogleLogin()">התחבר עם גוגל</button>
   </div>
 </div>
 
 <div id="mainApp" style="display:none">
-<div class="hdr"><div class="hdr-r"><div><div class="lg">💰 ShmoopsiePoo</div><div class="lg-s">Yael & Amit</div></div><div style="display:flex;align-items:center;gap:4px"><button class="ref-btn" onclick="toggleTheme()" id="themeBtn">☀️</button><button class="ref-btn" onclick="firebase.auth().signOut()">🚪</button><div class="plb" id="pLbl"></div></div></div></div>
+  <div class="hdr">
+    <div class="hdr-r">
+      <div><div class="lg">💰 ShmoopsiePoo</div></div>
+      <div>
+        <button class="ref-btn" onclick="toggleTheme()">☀️</button>
+        <button class="ref-btn" onclick="firebase.auth().signOut()">🚪</button>
+      </div>
+    </div>
+  </div>
 
-<div class="dba"><label>מ:</label><input type="date" class="di" id="sd"><label>עד:</label><input type="date" class="di" id="ed"><button class="abtn" onclick="applyFilter()">סנן</button><div class="prw" id="presets"></div></div>
+  <div class="dba">
+    <input type="date" class="di" id="sd">
+    <input type="date" class="di" id="ed">
+    <button class="abtn" onclick="applyFilter()">סנן</button>
+  </div>
 
-<div class="ct">
-<div id="pgS" class="pg show"><div class="kg" id="kpis"></div><div class="sbox" id="sBox"></div><div class="cd"><div class="ttt">הכנסות vs הוצאות חודשי</div><div id="mChart" class="bars"></div></div><div class="cd"><div class="ttt">פילוח הכנסות לפי קטגוריה</div><div class="donut-w"><div class="donut" id="donut"></div><div id="piLg" style="flex:1"></div></div></div><div class="cd"><div class="ttt">טופ הוצאות לפי קטגוריה</div><div id="eCats"></div></div><div class="upd" id="updTime"></div></div>
+  <div class="ct">
+    <div id="pgS" class="pg show">
+      <div class="kg" id="kpis"></div>
+      <div class="cd"><div class="ttt">הכנסות vs הוצאות</div><div id="mChart" class="bars"></div></div>
+      <div id="sBox" class="sbox cd" style="text-align:center; padding:15px; font-weight:700;"></div>
+    </div>
 
-<div id="pgI" class="pg"><input class="si" id="iSr" placeholder="🔍 חיפוש הכנסות..." oninput="rInc()"><div id="sumI" class="summary-dash"></div><div class="fr" id="iCh"></div><div class="cn" id="iCn"></div><div id="iLs"></div><button class="fab" onclick="openModal('income')">+</button></div>
+    <div id="pgI" class="pg">
+      <div class="ttt">💰 רשימת הכנסות</div>
+      <div id="iLs"></div>
+      <button class="fab" onclick="openModal('income')">+</button>
+    </div>
 
-<div id="pgE" class="pg"><input class="si" id="eSr" placeholder="🔍 חיפוש הוצאות..." oninput="rExp()"><div id="sumE" class="summary-dash"></div><div class="fr" id="eCh"></div><div class="cn" id="eCn"></div><div id="eLs"></div><button class="fab exp" onclick="openModal('expense')">💸</button></div>
+    <div id="pgE" class="pg">
+      <div class="ttt">💸 רשימת הוצאות</div>
+      <div id="eLs"></div>
+      <button class="fab exp" onclick="openModal('expense')">💸</button>
+    </div>
 
-<div id="pgT" class="pg"><div class="cd"><div class="ttt">🔒 אבטחה ביומטרית</div><p style="font-size:11px;color:var(--text-sub);margin-bottom:8px;">כאשר מופעל, האפליקציה תבקש זיהוי פנים בכל פתיחה.</p><button id="bioSetupBtn" class="bio-setup-btn" onclick="setupBio()"><span id="bioBtnIcon">🔒</span> <span id="bioBtnText">הפעל נעילה ביומטרית</span></button></div><div class="cd"><div class="ttt">🏷️ קטגוריות</div><div id="catList"></div></div></div>
+    <div id="pgT" class="pg">
+      <div class="cd">
+        <div class="ttt">🔒 הגדרות אבטחה</div>
+        <button class="abtn" style="width:100%;" onclick="setupBio()">הפעל/בטל נעילה ביומטרית</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nb on" id="n0" onclick="go('S')"><span class="ic">📊</span></button>
+    <button class="nb off" id="n1" onclick="go('I')"><span class="ic">💰</span></button>
+    <button class="nb off" id="n2" onclick="go('E')"><span class="ic">💸</span></button>
+    <button class="nb off" id="n3" onclick="go('T')"><span class="ic">⚙️</span></button>
+  </div>
 </div>
 
-<div class="modal" id="addModal"><div class="m-box"><div class="m-tl" id="modalTitle">הוספה</div><div class="inp-g"><label class="inp-l">תאריך</label><input type="date" class="inp" id="nDate"></div><div class="inp-g"><label class="inp-l">סכום</label><input type="number" class="inp" id="nAmt" placeholder="0" inputmode="numeric"></div><div class="inp-g"><label class="inp-l">תיאור</label><input type="text" class="inp" id="nDesc" placeholder="מה זה?"></div><div class="inp-g"><label class="inp-l">קטגוריה</label><div class="cat-chips" id="modalCats"></div></div><div class="m-acts"><button class="btn btn-c" onclick="closeModal()">ביטול</button><button class="btn btn-s" id="saveBtn" onclick="saveItem()">שמור</button></div></div></div>
-
-<div class="nav">
-  <button class="nb on" id="n0" onclick="go('S')"><span class="ic">📊</span><span class="lb">סיכום</span></button>
-  <button class="nb off" id="n1" onclick="go('I')"><span class="ic">💰</span><span class="lb">הכנסות</span></button>
-  <button class="nb off" id="n2" onclick="go('E')"><span class="ic">💸</span><span class="lb">הוצאות</span></button>
-  <button class="nb off" id="n3" onclick="go('T')"><span class="ic">⚙️</span><span class="lb">הגדרות</span></button>
-</div>
+<div class="modal" id="addModal">
+  <div class="m-box">
+    <div class="ttt" id="modalTitle">הוספה</div>
+    <input type="number" class="inp" id="nAmt" placeholder="סכום" inputmode="numeric">
+    <input type="text" class="inp" id="nDesc" placeholder="תיאור">
+    <button class="abtn" style="width:100%; padding:12px;" onclick="saveItem()">שמור</button>
+    <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-sub); margin-top:15px;">ביטול</button>
+  </div>
 </div>
 
 <script>
@@ -218,24 +185,16 @@ firebase.initializeApp({
   appId:"1:589285900622:web:1ac7d9b5181266f20b1e1f"
 });
 const db=firebase.database(),dbRef=db.ref('shmoopsiepoo');
-
-const ALLOWED_EMAILS = {
-  'goreshnikamit@gmail.com': 'Amit',
-  'yael.example@gmail.com': 'Yael' 
-};
-
-let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
-let iCt='הכל',eCt='הכל',D={income:[],expense:[],categories:[]};
+const ALLOWED_EMAILS = {'goreshnikamit@gmail.com': 'Amit', 'yael.example@gmail.com': 'Yael'};
 const bioKeyName = 'shmoopsie_bio_enabled';
+let currentUser='', s1='', s2='', curType='income';
 
-// --- סטיקר ---
 function showSticker() {
-  const overlay = document.getElementById('stickerOverlay');
-  overlay.style.display = 'flex';
-  setTimeout(() => { overlay.style.display = 'none'; }, 1500);
+  const o = document.getElementById('stickerOverlay');
+  o.style.display = 'flex';
+  setTimeout(() => { o.style.display = 'none'; }, 1500);
 }
 
-// --- ביומטרי ---
 async function unlockBio() {
   if (!window.PublicKeyCredential) return;
   try {
@@ -248,23 +207,15 @@ async function unlockBio() {
 function setupBio() {
   if (localStorage.getItem(bioKeyName)) { localStorage.removeItem(bioKeyName); alert("בוטל"); }
   else { localStorage.setItem(bioKeyName, 'true'); alert("הופעל!"); }
-  updateBioBtn();
 }
 
-function updateBioBtn() {
-  const isEnabled = localStorage.getItem(bioKeyName);
-  document.getElementById('bioBtnText').textContent = isEnabled ? "בטל נעילה ביומטרית" : "הפעל נעילה ביומטרית";
-  document.getElementById('bioBtnIcon').textContent = isEnabled ? "🔓" : "🔒";
-}
-
-// --- AUTH ---
 firebase.auth().onAuthStateChanged(user => {
   if (user && ALLOWED_EMAILS[user.email.toLowerCase()]) {
     currentUser = ALLOWED_EMAILS[user.email.toLowerCase()];
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
     if (localStorage.getItem(bioKeyName)) { document.getElementById('bioLockScreen').style.display = 'flex'; unlockBio(); }
-    updateBioBtn(); startListening();
+    startListening();
   } else {
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('mainApp').style.display = 'none';
@@ -276,83 +227,50 @@ function doGoogleLogin() {
   firebase.auth().signInWithPopup(provider).catch(() => firebase.auth().signInWithRedirect(provider));
 }
 
-// --- LOGIC ---
-function startListening(){
-  dbRef.on('value',snap=>{
-    const v=snap.val()||{};
-    D.income=v.income?Object.values(v.income):[];
-    D.expense=v.expense?Object.values(v.expense):[];
-    D.categories=v.categories?Object.values(v.categories):[];
-    renderAll();
-  });
-  initDates();
+function startListening() {
+  const n = new Date(); s1 = n.toISOString().slice(0,7)+"-01"; s2 = n.toISOString().slice(0,10);
+  document.getElementById('sd').value=s1; document.getElementById('ed').value=s2;
+  dbRef.on('value', snap => { renderAll(snap.val() || {}); });
 }
 
 function saveItem() {
-  const d=document.getElementById('nDate').value, a=parseFloat(document.getElementById('nAmt').value), desc=document.getElementById('nDesc').value.trim();
-  if(!d||!a||!desc||!modalCat) return alert("מלא הכל");
-
-  const id=editId||Date.now().toString();
-  dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
-  
+  const a = document.getElementById('nAmt').value, d = document.getElementById('nDesc').value;
+  if(!a || !d) return;
+  dbRef.child(curType).push({a: parseFloat(a), desc: d, d: new Date().toISOString().slice(0,10), by: currentUser});
   closeModal();
-  if (curType === 'expense') {
-    showSticker();
-  } else if (typeof confetti==='function') {
-    confetti({particleCount:150,spread:70,origin:{y:0.6}});
-  }
+  if (curType === 'expense') showSticker();
+  else if (typeof confetti==='function') confetti({particleCount:150, spread:70, origin:{y:0.6}});
 }
 
-// --- RENDER HELPERS ---
-function initDates(){
-  const n=new Date(); s1=n.toISOString().slice(0,7)+"-01"; s2=n.toISOString().slice(0,10);
-  document.getElementById('sd').value=s1; document.getElementById('ed').value=s2;
-  applyFilter();
-}
-function applyFilter(){ s1=document.getElementById('sd').value; s2=document.getElementById('ed').value; renderAll(); }
-function openModal(type,item){
-  curType=type; editId=item?item.id:null;
-  document.getElementById('nDate').value=item?item.d:new Date().toISOString().slice(0,10);
-  document.getElementById('nAmt').value=item?item.a:'';
-  document.getElementById('nDesc').value=item?item.desc:'';
-  modalCat=item?item.c:''; renderModalCats();
-  document.getElementById('addModal').classList.add('open');
-}
-function closeModal(){ document.getElementById('addModal').classList.remove('open'); }
-function renderModalCats(){
-  document.getElementById('modalCats').innerHTML=D.categories.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" onclick="modalCat='${c}';renderModalCats()">${c}</div>`).join('');
-}
-function go(p){
-  curPg=p; ['S','I','E','T'].forEach((x,i)=>{
-    document.getElementById('pg'+x).className='pg'+(x===p?' show':'');
-    document.getElementById('n'+i).className='nb '+(x===p?'on':'off');
-  });
-}
-function toggleTheme(){ document.body.getAttribute('data-theme')==='light'?document.body.removeAttribute('data-theme'):document.body.setAttribute('data-theme','light'); }
-
-// (שאר פונקציות הרינדור המקוריות - KPI, Bars, Donuts וכו' - נשמרות כאן כפי שהיו בקוד המקורי)
-function renderAll(){
-  const inc = D.income.filter(r=>r.d>=s1&&r.d<=s2);
-  const exp = D.expense.filter(r=>r.d>=s1&&r.d<=s2);
+function renderAll(v) {
+  const inc = Object.values(v.income || {}).filter(r=>r.d>=s1&&r.d<=s2);
+  const exp = Object.values(v.expense || {}).filter(r=>r.d>=s1&&r.d<=s2);
   const ti = inc.reduce((s,r)=>s+r.a,0), te = exp.reduce((s,r)=>s+r.a,0);
   
   document.getElementById('kpis').innerHTML = `
     <div class="kp"><div class="kl">הכנסות</div><div class="kv tl">₪${ti.toLocaleString()}</div></div>
     <div class="kp"><div class="kl">הוצאות</div><div class="kv or">₪${te.toLocaleString()}</div></div>`;
+  document.getElementById('sBox').innerHTML = `יתרה: ₪${(ti-te).toLocaleString()}`;
   
-  document.getElementById('sBox').innerHTML = `<div class="sr"><span>יתרה לתקופה:</span><span class="${ti>=te?'gn':'rd'}">₪${(ti-te).toLocaleString()}</span></div>`;
+  document.getElementById('iLs').innerHTML = inc.map(r=>`<div class="dc"><div class="dr"><div>${r.desc}</div><div class="da gn">+₪${r.a}</div></div></div>`).join('');
+  document.getElementById('eLs').innerHTML = exp.map(r=>`<div class="dc"><div class="dr"><div>${r.desc}</div><div class="da or">-₪${r.a}</div></div></div>`).join('');
   
-  rInc(); rExp();
+  const mx = Math.max(ti, te, 1);
+  document.getElementById('mChart').innerHTML = `
+    <div class="bar-g"><div class="bar" style="height:${(ti/mx)*100}%; background:#14b8a6;"></div><div style="font-size:10px;">הכנסות</div></div>
+    <div class="bar-g"><div class="bar" style="height:${(te/mx)*100}%; background:#f97316;"></div><div style="font-size:10px;">הוצאות</div></div>`;
 }
 
-function rInc(){
-  const fl = D.income.filter(r=>r.d>=s1&&r.d<=s2);
-  document.getElementById('iLs').innerHTML = fl.map(r=>`<div class="dc"><div class="dr"><div>${r.desc}</div><div class="da gn">+₪${r.a}</div></div></div>`).join('');
+function applyFilter() { s1=document.getElementById('sd').value; s2=document.getElementById('ed').value; dbRef.once('value', s=>renderAll(s.val()||{})); }
+function openModal(t) { curType=t; document.getElementById('modalTitle').textContent=t==='income'?'הכנסה':'הוצאה'; document.getElementById('addModal').classList.add('open'); }
+function closeModal() { document.getElementById('addModal').classList.remove('open'); }
+function go(p) { 
+  ['S','I','E','T'].forEach((x,i)=>{
+    document.getElementById('pg'+x).style.display=x===p?'block':'none';
+    document.getElementById('n'+i).className='nb '+(x===p?'on':'off');
+  });
 }
-function rExp(){
-  const fl = D.expense.filter(r=>r.d>=s1&&r.d<=s2);
-  document.getElementById('eLs').innerHTML = fl.map(r=>`<div class="dc"><div class="dr"><div>${r.desc}</div><div class="da or">-₪${r.a}</div></div></div>`).join('');
-}
+function toggleTheme() { document.body.getAttribute('data-theme')==='light'?document.body.removeAttribute('data-theme'):document.body.setAttribute('data-theme','light'); }
 </script>
 </body>
 </html>
