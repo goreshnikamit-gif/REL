@@ -107,6 +107,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 
 .fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none;cursor:pointer;transition:transform 0.2s}
 .fab.exp{background:#f97316;box-shadow:0 4px 12px rgba(249,115,22,0.4)}
+.fab.wa{background:#25D366;box-shadow:0 4px 12px rgba(37,211,102,0.4);font-size:26px}
 .fab:active{transform:scale(0.95)}
 
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
@@ -128,7 +129,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:600;font-family:inherit;cursor:pointer;font-size:14px}
 .btn-c{background:var(--bg-input);color:var(--text-main)}
 .btn-s{background:var(--accent);color:white}
-.btn-s:disabled{opacity:0.7;cursor:wait}
 
 .cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
 .cat-item-name{font-size:13px;font-weight:500;color:var(--text-main);flex:1}
@@ -195,6 +195,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <div class="cd"><div class="ttt">פילוח הכנסות לפי קטגוריה</div><div class="donut-w"><div class="donut" id="donut"></div><div id="piLg" style="flex:1"></div></div></div>
   <div class="cd"><div class="ttt">טופ הוצאות לפי קטגוריה</div><div id="eCats"></div></div>
   <div class="upd" id="updTime"></div>
+  <button class="fab wa" onclick="shareWhatsApp()">📲</button>
 </div>
 
 <div id="pgI" class="pg">
@@ -291,8 +292,7 @@ const EC=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899',
 const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'];
 
 let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
-let iCt='הכל',eCt='הכל';
-let editCatOld='';
+let iCt='הכל',eCt='הכל',editCatOld='';
 let D={income:[],expense:[],categories:[]};
 
 function doAuth(){
@@ -315,7 +315,6 @@ function startListening(){
     const v=snap.val()||{};
     D.income=v.income?Object.values(v.income):[];
     D.expense=v.expense?Object.values(v.expense):[];
-    // Unified categories
     let cats=v.categories||[];
     if(!Array.isArray(cats))cats=Object.values(cats);
     D.categories=cats;
@@ -356,6 +355,60 @@ function sumDash(id,arr,cls){
   document.getElementById(id).innerHTML=`<div><div class="sd-ttl">סה״כ</div><div class="sd-val ${cls}">${fmt(t)}</div></div><div style="border-right:1px solid var(--border-color);border-left:1px solid var(--border-color)"><div class="sd-ttl">פעולות</div><div class="sd-val">${c}</div></div><div><div class="sd-ttl">ממוצע</div><div class="sd-val">${fmt(a)}</div></div>`;
 }
 
+// ========== WHATSAPP SHARE ==========
+function shareWhatsApp(){
+  const{inc,exp}=gF();
+  const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
+  const d1=new Date(s1).toLocaleDateString('he-IL'),d2=new Date(s2).toLocaleDateString('he-IL');
+
+  let msg=`💰 *ShmoopsiePoo - סיכום תקופה*\n`;
+  msg+=`📅 ${d1} - ${d2}\n`;
+  msg+=`━━━━━━━━━━━━━━━\n\n`;
+
+  msg+=`📊 *סיכום כללי:*\n`;
+  msg+=`✅ הכנסות: ${fmt(ti)}\n`;
+  msg+=`❌ הוצאות: ${fmt(te)}\n`;
+  msg+=`${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n`;
+
+  // Income by category
+  const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
+  const incCats=Object.entries(icBC).sort((a,b)=>b[1]-a[1]);
+  if(incCats.length>0){
+    msg+=`💚 *הכנסות לפי קטגוריה:*\n`;
+    incCats.forEach(([k,v])=>{msg+=`  • ${k}: ${fmt(v)}\n`});
+    msg+=`\n`;
+  }
+
+  // Expense by category
+  const ecBC={};exp.forEach(r=>{const c=r.c||'אחר';ecBC[c]=(ecBC[c]||0)+r.a});
+  const expCats=Object.entries(ecBC).sort((a,b)=>b[1]-a[1]);
+  if(expCats.length>0){
+    msg+=`🧡 *הוצאות לפי קטגוריה:*\n`;
+    expCats.forEach(([k,v])=>{msg+=`  • ${k}: ${fmt(v)}\n`});
+    msg+=`\n`;
+  }
+
+  // Last 5 incomes
+  if(inc.length>0){
+    msg+=`📝 *${Math.min(5,inc.length)} הכנסות אחרונות:*\n`;
+    inc.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | +${fmt(r.a)}\n`});
+    msg+=`\n`;
+  }
+
+  // Last 5 expenses
+  if(exp.length>0){
+    msg+=`📝 *${Math.min(5,exp.length)} הוצאות אחרונות:*\n`;
+    exp.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | -${fmt(r.a)}\n`});
+    msg+=`\n`;
+  }
+
+  msg+=`━━━━━━━━━━━━━━━\n`;
+  msg+=`נשלח מ-ShmoopsiePoo 💰`;
+
+  const url='https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+}
+
 // ========== MODAL ==========
 function openModal(type,item){
   curType=type;editId=null;modalCat='';
@@ -394,70 +447,49 @@ function saveItem(){
 function deleteItem(type,id){if(confirm('למחוק?'))dbRef.child(type).child(id).remove()}
 function editItem(type,id){const arr=type==='income'?D.income:D.expense;const item=arr.find(r=>r.id===id);if(item)openModal(type,item)}
 
-// ========== UNIFIED CATEGORIES ==========
-function getCatCount(catName){
-  return D.income.filter(r=>r.c===catName).length+D.expense.filter(r=>r.c===catName).length;
-}
-
+// ========== CATEGORIES ==========
+function getCatCount(catName){return D.income.filter(r=>r.c===catName).length+D.expense.filter(r=>r.c===catName).length}
 function addCatFromPage(){
   const v=document.getElementById('newCatPageInput').value.trim();if(!v)return;
-  const cats=D.categories||[];
-  if(cats.includes(v)){alert('קטגוריה כבר קיימת');return}
-  cats.push(v);dbRef.child('categories').set(cats);
-  document.getElementById('newCatPageInput').value='';
+  const cats=D.categories||[];if(cats.includes(v)){alert('קטגוריה כבר קיימת');return}
+  cats.push(v);dbRef.child('categories').set(cats);document.getElementById('newCatPageInput').value='';
 }
-
 function deleteCat(catName){
-  const count=getCatCount(catName);
-  let msg='למחוק את הקטגוריה "'+catName+'"?';
-  if(count>0)msg+='\nשים לב: יש '+count+' רשומות שמשתמשות בקטגוריה זו. הרשומות לא יימחקו.';
+  const count=getCatCount(catName);let msg='למחוק את "'+catName+'"?';
+  if(count>0)msg+='\nיש '+count+' רשומות עם קטגוריה זו. הן לא יימחקו.';
   if(!confirm(msg))return;
-  const cats=(D.categories||[]).filter(c=>c!==catName);
-  dbRef.child('categories').set(cats);
+  dbRef.child('categories').set((D.categories||[]).filter(c=>c!==catName));
 }
-
-function openEditCat(oldName){
-  editCatOld=oldName;
-  document.getElementById('editCatName').value=oldName;
-  document.getElementById('editCatModal').classList.add('open');
-}
+function openEditCat(oldName){editCatOld=oldName;document.getElementById('editCatName').value=oldName;document.getElementById('editCatModal').classList.add('open')}
 function closeEditCat(){document.getElementById('editCatModal').classList.remove('open')}
-
 function saveEditCat(){
   const newName=document.getElementById('editCatName').value.trim();
   if(!newName){alert('הכנס שם');return}
   if(newName===editCatOld){closeEditCat();return}
-  const cats=D.categories||[];
-  if(cats.includes(newName)){alert('קטגוריה בשם זה כבר קיימת');return}
-  const idx=cats.indexOf(editCatOld);
-  if(idx!==-1){cats[idx]=newName;dbRef.child('categories').set(cats)}
-  // Update all income+expense items
+  const cats=D.categories||[];if(cats.includes(newName)){alert('שם קיים');return}
+  const idx=cats.indexOf(editCatOld);if(idx!==-1){cats[idx]=newName;dbRef.child('categories').set(cats)}
   const updates={};
   D.income.forEach(r=>{if(r.c===editCatOld)updates['income/'+r.id+'/c']=newName});
   D.expense.forEach(r=>{if(r.c===editCatOld)updates['expense/'+r.id+'/c']=newName});
   if(Object.keys(updates).length>0)dbRef.update(updates);
   closeEditCat();
 }
-
 function renderCatPage(){
   const cats=D.categories||[];
-  if(cats.length===0){
-    document.getElementById('catList').innerHTML='<div class="empty" style="padding:12px">אין קטגוריות עדיין. הוסף אחת למטה!</div>';
-    return;
-  }
+  if(!cats.length){document.getElementById('catList').innerHTML='<div class="empty" style="padding:12px">אין קטגוריות. הוסף למטה!</div>';return}
   document.getElementById('catList').innerHTML=cats.map(c=>{
     const count=getCatCount(c);
-    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button onclick="openEditCat('${esc(c)}')" title="ערוך">✏️</button><button onclick="deleteCat('${esc(c)}')" title="מחק">🗑</button></div></div>`;
+    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button onclick="openEditCat('${esc(c)}')">✏️</button><button onclick="deleteCat('${esc(c)}')">🗑</button></div></div>`;
   }).join('');
 }
 
 // ITEM CARD
 function mkC(r,t){
   const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',type=t==='i'?'income':'expense';
-  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')" title="ערוך">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')" title="מחק">🗑</button></div></div></div>`;
+  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')">🗑</button></div></div></div>`;
 }
 
-// RENDER ALL
+// RENDER
 function renderAll(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
