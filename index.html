@@ -27,6 +27,23 @@
 body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system-ui,sans-serif;direction:rtl;min-height:100vh;overflow-x:hidden;padding-bottom:90px;transition:background 0.3s,color 0.3s}
 ::-webkit-scrollbar{display:none}
 
+/* שכבת המדבקה המנצחת */
+#stickerOverlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  display: none; align-items: center; justify-content: center;
+  z-index: 200000; pointer-events: none;
+}
+.sticker-img {
+  width: 250px; height: 250px;
+  animation: stickerPop 1.5s ease-out forwards;
+}
+@keyframes stickerPop {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  20% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  80% { transform: scale(1.1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0) rotate(20deg); opacity: 0; }
+}
+
 #loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg-body);z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
 .l-box{background:var(--bg-card);padding:40px 30px;border-radius:24px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border-color)}
 .l-ttl{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#14b8a6,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -156,6 +173,10 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 </head>
 <body>
 
+<div id="stickerOverlay">
+  <img src="https://i.ibb.co/Xf8z1V4/shmoopsie-sticker.png" class="sticker-img">
+</div>
+
 <div id="loginScreen">
   <div class="l-box">
     <div class="l-ttl">💰 ShmoopsiePoo</div>
@@ -215,7 +236,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <div class="fr" id="eCh"></div>
   <div class="cn" id="eCn"></div>
   <div id="eLs"></div>
-  <button class="fab exp" onclick="openModal('expense')">+</button>
+  <button class="fab exp" onclick="openModal('expense')">💸</button>
 </div>
 
 <div id="pgT" class="pg">
@@ -302,6 +323,13 @@ const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג
 let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
 let iCt='הכל',eCt='הכל',editCatOld='';
 let D={income:[],expense:[],categories:[]};
+
+// --- פונקציית המדבקה ---
+function showSticker() {
+  const overlay = document.getElementById('stickerOverlay');
+  overlay.style.display = 'flex';
+  setTimeout(() => { overlay.style.display = 'none'; }, 1500);
+}
 
 // תפיסת שגיאות שעלולות לקרות בזמן החזרה מדף ההתחברות של גוגל
 firebase.auth().getRedirectResult().catch(err => {
@@ -477,7 +505,10 @@ function saveItem(){
   if(!d||!a||a<=0||!desc){alert('מלא תאריך, סכום ותיאור');return}
   if(!modalCat){alert('בחר קטגוריה');return}
   if(editId){dbRef.child(curType).child(editId).update({d,a,desc,c:modalCat,by:currentUser})}
-  else{const id=Date.now().toString();dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}})}
+  else{const id=Date.now().toString();dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
+    if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}});
+    if(curType==='expense') showSticker(); // המדבקה שלך!
+  }
   closeModal();
 }
 function deleteItem(type,id){if(confirm('למחוק?'))dbRef.child(type).child(id).remove()}
