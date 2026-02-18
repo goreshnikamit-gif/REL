@@ -325,12 +325,10 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 // פונקציית התחברות עם פופ-אפ של גוגל
+  // פונקציית התחברות עם הפניה (Redirect) - הרבה יותר אמין בטלפונים
 function doGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider).catch(err => {
-    document.getElementById('loginErr').textContent = 'שגיאה בהתחברות: ' + err.message;
-    document.getElementById('loginErr').style.display = 'block';
-  });
+  firebase.auth().signInWithRedirect(provider);
 }
 
 function toggleTheme(){
