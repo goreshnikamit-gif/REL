@@ -27,20 +27,21 @@
 body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system-ui,sans-serif;direction:rtl;min-height:100vh;overflow-x:hidden;padding-bottom:90px;transition:background 0.3s,color 0.3s}
 ::-webkit-scrollbar{display:none}
 
-/* שכבת המדבקה - הוספה יחידה לעיצוב */
+/* שכבת המדבקה המנצחת - זמן מעודכן ל-2 שניות */
 #stickerOverlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   display: none; align-items: center; justify-content: center;
   z-index: 200000; pointer-events: none;
 }
 .sticker-img {
-  width: 250px; height: 250px;
-  animation: stickerPop 1.5s ease-out forwards;
+  width: 280px; height: 280px;
+  object-fit: contain;
+  animation: stickerPop 2s ease-out forwards;
 }
 @keyframes stickerPop {
   0% { transform: scale(0) rotate(-20deg); opacity: 0; }
-  20% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-  80% { transform: scale(1.1) rotate(0deg); opacity: 1; }
+  15% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  85% { transform: scale(1.1) rotate(0deg); opacity: 1; }
   100% { transform: scale(0) rotate(20deg); opacity: 0; }
 }
 
@@ -174,7 +175,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 <body>
 
 <div id="stickerOverlay">
-  <img src="https://i.ibb.co/Xf8z1V4/shmoopsie-sticker.png" class="sticker-img">
+  <img src="https://i.postimg.cc/85zK09kC/image.png" class="sticker-img">
 </div>
 
 <div id="loginScreen">
@@ -322,11 +323,11 @@ let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=nul
 let iCt='הכל',eCt='הכל',editCatOld='';
 let D={income:[],expense:[],categories:[]};
 
-// --- פונקציית המדבקה - הוספה יחידה ללוגיקה ---
+// פונקציית המדבקה - 2 שניות
 function showSticker() {
   const overlay = document.getElementById('stickerOverlay');
   overlay.style.display = 'flex';
-  setTimeout(() => { overlay.style.display = 'none'; }, 1500);
+  setTimeout(() => { overlay.style.display = 'none'; }, 2000);
 }
 
 firebase.auth().getRedirectResult().catch(err => {
@@ -421,19 +422,63 @@ function shareWhatsApp(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
   const d1=new Date(s1).toLocaleDateString('he-IL'),d2=new Date(s2).toLocaleDateString('he-IL');
-  let msg=`💰 *ShmoopsiePoo - סיכום תקופה*\n📅 ${d1} - ${d2}\n━━━━━━━━━━━━━━━\n\n📊 *סיכום כללי:*\n✅ הכנסות: ${fmt(ti)}\n❌ הוצאות: ${fmt(te)}\n${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n━━━━━━━━━━━━━━━\nנשלח מ-ShmoopsiePoo 💰`;
+
+  let msg=`💰 *ShmoopsiePoo - סיכום תקופה*\n`;
+  msg+=`📅 ${d1} - ${d2}\n`;
+  msg+=`━━━━━━━━━━━━━━━\n\n`;
+
+  msg+=`📊 *סיכום כללי:*\n`;
+  msg+=`✅ הכנסות: ${fmt(ti)}\n`;
+  msg+=`❌ הוצאות: ${fmt(te)}\n`;
+  msg+=`${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n`;
+
+  const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
+  const incCats=Object.entries(icBC).sort((a,b)=>b[1]-a[1]);
+  if(incCats.length>0){
+    msg+=`💚 *הכנסות לפי קטגוריה:*\n`;
+    incCats.forEach(([k,v])=>{msg+=`  • ${k}: ${fmt(v)}\n`});
+    msg+=`\n`;
+  }
+
+  const ecBC={};exp.forEach(r=>{const c=r.c||'אחר';ecBC[c]=(ecBC[c]||0)+r.a});
+  const expCats=Object.entries(ecBC).sort((a,b)=>b[1]-a[1]);
+  if(expCats.length>0){
+    msg+=`🧡 *הוצאות לפי קטגוריה:*\n`;
+    expCats.forEach(([k,v])=>{msg+=`  • ${k}: ${fmt(v)}\n`});
+    msg+=`\n`;
+  }
+
+  if(inc.length>0){
+    msg+=`📝 *${Math.min(5,inc.length)} הכנסות אחרונות:*\n`;
+    inc.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | +${fmt(r.a)}\n`});
+    msg+=`\n`;
+  }
+
+  if(exp.length>0){
+    msg+=`📝 *${Math.min(5,exp.length)} הוצאות אחרונות:*\n`;
+    exp.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | -${fmt(r.a)}\n`});
+    msg+=`\n`;
+  }
+
+  msg+=`━━━━━━━━━━━━━━━\n`;
+  msg+=`נשלח מ-ShmoopsiePoo 💰`;
+
   const url='https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
   window.open(url,'_blank');
 }
 
 function openModal(type,item){
   curType=type;editId=null;modalCat='';
-  document.getElementById('nDate').value=item?item.d:new Date().toISOString().split('T')[0];
-  document.getElementById('nAmt').value=item?item.a:'';
-  document.getElementById('nDesc').value=item?item.desc:'';
+  document.getElementById('nDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('nAmt').value='';document.getElementById('nDesc').value='';document.getElementById('newCatInput').value='';
   document.getElementById('modalTitle').textContent=type==='income'?'הוספת הכנסה':'הוספת הוצאה';
-  document.getElementById('saveBtn').textContent=item?'עדכן':'שמור';
-  if(item){editId=item.id;modalCat=item.c||'';}
+  document.getElementById('saveBtn').textContent='שמור';
+  if(item){
+    editId=item.id;document.getElementById('nDate').value=item.d;document.getElementById('nAmt').value=item.a;
+    document.getElementById('nDesc').value=item.desc;modalCat=item.c||'';
+    document.getElementById('modalTitle').textContent=type==='income'?'עריכת הכנסה':'עריכת הוצאה';
+    document.getElementById('saveBtn').textContent='עדכן';
+  }
   renderModalCats();document.getElementById('addModal').classList.add('open');
 }
 function closeModal(){document.getElementById('addModal').classList.remove('open');editId=null}
@@ -448,8 +493,6 @@ function addNewCat(){
   cats.push(v);dbRef.child('categories').set(cats);
   document.getElementById('newCatInput').value='';modalCat=v;
 }
-
-/* שים לב - כאן השארתי את הפונקציה המקורית שלך בדיוק אותו דבר, רק הוספתי את שורת הסטיקר בסוף */
 function saveItem(){
   const d=document.getElementById('nDate').value,a=parseFloat(document.getElementById('nAmt').value),desc=document.getElementById('nDesc').value.trim();
   if(!d||!a||a<=0||!desc){alert('מלא תאריך, סכום ותיאור');return}
@@ -457,11 +500,10 @@ function saveItem(){
   if(editId){dbRef.child(curType).child(editId).update({d,a,desc,c:modalCat,by:currentUser})}
   else{const id=Date.now().toString();dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
     if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}});
-    if(curType==='expense') showSticker(); // המדבקה שלך קופצת רק כאן!
+    if(curType==='expense') showSticker();
   }
   closeModal();
 }
-
 function deleteItem(type,id){if(confirm('למחוק?'))dbRef.child(type).child(id).remove()}
 function editItem(type,id){const arr=type==='income'?D.income:D.expense;const item=arr.find(r=>r.id===id);if(item)openModal(type,item)}
 
@@ -472,25 +514,37 @@ function addCatFromPage(){
   cats.push(v);dbRef.child('categories').set(cats);document.getElementById('newCatPageInput').value='';
 }
 function deleteCat(catName){
-  const count=getCatCount(catName);if(!confirm('למחוק?'))return;
+  const count=getCatCount(catName);let msg='למחוק את "'+catName+'"?';
+  if(count>0)msg+='\nיש '+count+' רשומות עם קטגוריה זו. הן לא יימחקו.';
+  if(!confirm(msg))return;
   dbRef.child('categories').set((D.categories||[]).filter(c=>c!==catName));
 }
 function openEditCat(oldName){editCatOld=oldName;document.getElementById('editCatName').value=oldName;document.getElementById('editCatModal').classList.add('open')}
 function closeEditCat(){document.getElementById('editCatModal').classList.remove('open')}
 function saveEditCat(){
-  const newName=document.getElementById('editCatName').value.trim();if(!newName)return;
+  const newName=document.getElementById('editCatName').value.trim();
+  if(!newName){alert('הכנס שם');return}
+  if(newName===editCatOld){closeEditCat();return}
   const cats=D.categories||[];if(cats.includes(newName)){alert('שם קיים');return}
   const idx=cats.indexOf(editCatOld);if(idx!==-1){cats[idx]=newName;dbRef.child('categories').set(cats)}
+  const updates={};
+  D.income.forEach(r=>{if(r.c===editCatOld)updates['income/'+r.id+'/c']=newName});
+  D.expense.forEach(r=>{if(r.c===editCatOld)updates['expense/'+r.id+'/c']=newName});
+  if(Object.keys(updates).length>0)dbRef.update(updates);
   closeEditCat();
 }
 function renderCatPage(){
   const cats=D.categories||[];
-  document.getElementById('catList').innerHTML=cats.map(c=>`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-acts"><button onclick="openEditCat('${esc(c)}')">✏️</button><button onclick="deleteCat('${esc(c)}')">🗑</button></div></div>`).join('');
+  if(!cats.length){document.getElementById('catList').innerHTML='<div class="empty" style="padding:12px">אין קטגוריות. הוסף למטה!</div>';return}
+  document.getElementById('catList').innerHTML=cats.map(c=>{
+    const count=getCatCount(c);
+    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button onclick="openEditCat('${esc(c)}')">✏️</button><button onclick="deleteCat('${esc(c)}')">🗑</button></div></div>`;
+  }).join('');
 }
 
 function mkC(r,t){
   const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',type=t==='i'?'income':'expense';
-  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span></div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')">🗑</button></div></div></div>`;
+  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')">🗑</button></div></div></div>`;
 }
 
 function renderAll(){
@@ -504,6 +558,7 @@ function renderAll(){
   const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
   let sb='<div class="sbt">סיכום הכנסות לתקופה</div>';
   Object.entries(icBC).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{sb+=`<div class="sr"><span>${esc(k)}</span><span class="tl">${fmt(v)}</span></div>`});
+  sb+=`<div class="sr" style="border-top:2px solid var(--border-color);margin-top:4px;padding-top:4px"><span style="font-weight:700">סה״כ</span><span class="tl" style="font-weight:700;font-size:15px">${fmt(ti)}</span></div>`;
   document.getElementById('sBox').innerHTML=sb;
   rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);genInsights(inc,exp);rInc();rExp();renderCatPage();
 }
@@ -540,22 +595,30 @@ function genInsights(inc,exp){
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0);let ins=[];
   if(ti>te&&te>0)ins.push(`המצב מעולה! הכנסות גבוהות מהוצאות ב-<b>${fmt(ti-te)}</b>`);
   if(te>ti)ins.push(`שים לב: הוצאות עלו על הכנסות ב-<b>${fmt(te-ti)}</b>`);
+  const cats={};exp.forEach(r=>{cats[r.c]=(cats[r.c]||0)+r.a});
+  const top=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  if(top)ins.push(`ההוצאה הגדולה ביותר: <b>${esc(top[0])}</b> (${fmt(top[1])})`);
+  if(inc.length>0)ins.push(`ממוצע הכנסה בודדת: <b>${fmt(ti/inc.length)}</b>`);
   document.getElementById('insightsBox').innerHTML=ins.length?ins.map(t=>`<div class="insight-item">${t}</div>`).join(''):'<div class="empty">אין מספיק נתונים</div>';
 }
 
 function rInc(){
-  const{inc}=gF();const q=(document.getElementById('iSr').value||'').toLowerCase();
+  const{inc}=gF();const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
+  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt='${c}';rInc()">${esc(c)}</button>`).join('');
+  const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumI',fl,'gn');document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
 }
 
 function rExp(){
-  const{exp}=gF();const q=(document.getElementById('eSr').value||'').toLowerCase();
+  const{exp}=gF();const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort()];
+  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt='${c}';rExp()">${esc(c)}</button>`).join('');
+  const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumE',fl,'or');document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
 }
 
-function go(p){curPg=p;['S', 'I', 'E', 'T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
+function go(p){curPg=p;['S','I','E','T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
 
 (function(){if(localStorage.getItem('sp_theme')==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙'}})();
 </script>
