@@ -1,11 +1,14 @@
+הנה הקוד המלא - פשוט תעתיק הכל ותדביק ב-`index.html` בגיטהאב:
+
+```html
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ShmoopsiePoo</title>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap');
@@ -51,6 +54,14 @@ header h1 { font-size: 28px; margin-bottom: 5px; }
   -webkit-text-fill-color: transparent;
 }
 
+.login-error {
+  color: #ef4444;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+  display: none;
+}
+
 input, select {
   width: 100%;
   padding: 12px;
@@ -79,9 +90,11 @@ button {
   cursor: pointer;
   font-family: inherit;
   font-size: 14px;
+  transition: background 0.2s;
 }
 
 button:hover { background: #059669; }
+button:active { transform: scale(0.98); }
 
 #app { display: none; }
 
@@ -93,10 +106,33 @@ button:hover { background: #059669; }
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .user-info { font-size: 12px; color: #94a3b8; }
 .user-info strong { color: #10b981; }
+
+.sync-status {
+  font-size: 11px;
+  color: #10b981;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
 
 .top-buttons {
   display: flex;
@@ -109,6 +145,8 @@ button:hover { background: #059669; }
   width: auto;
   background: #334155;
 }
+
+.top-buttons button:hover { background: #475569; }
 
 .section {
   background: #1e293b;
@@ -168,22 +206,35 @@ button:hover { background: #059669; }
   justify-content: space-between;
   align-items: center;
   border: 1px solid #334155;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .item-left { flex: 1; }
 .item-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
 .item-meta { font-size: 11px; color: #94a3b8; }
-.item-amount { font-weight: 700; font-size: 14px; }
+.item-amount { font-weight: 700; font-size: 14px; white-space: nowrap; }
 .item-amount.income { color: #10b981; }
 .item-amount.expense { color: #ef4444; }
+
+.item-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
 .delete-btn {
   background: #ef4444;
   padding: 6px 10px;
   font-size: 12px;
   width: auto;
-  margin-right: 10px;
 }
+
+.delete-btn:hover { background: #dc2626; }
 
 .tabs {
   display: flex;
@@ -200,6 +251,8 @@ button:hover { background: #059669; }
   cursor: pointer;
   font-family: inherit;
   font-weight: 600;
+  width: auto;
+  transition: all 0.2s;
 }
 
 .tab-btn.active {
@@ -209,6 +262,31 @@ button:hover { background: #059669; }
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+
+.month-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.month-filter label {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.month-filter input[type="month"] {
+  width: auto;
+  margin-bottom: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-size: 14px;
+}
 
 .footer {
   text-align: center;
@@ -223,9 +301,10 @@ button:hover { background: #059669; }
 <div id="login">
   <div class="login-box">
     <h2>💰 ShmoopsiePoo</h2>
-    <input type="text" id="name" placeholder="שם (Amit או Yael)">
-    <input type="password" id="pass" placeholder="סיסמה">
-    <button onclick="doAuth()">התחיל</button>
+    <div class="login-error" id="loginError"></div>
+    <input type="text" id="name" placeholder="שם (Amit או Yael)" autocomplete="username">
+    <input type="password" id="pass" placeholder="סיסמה" autocomplete="current-password">
+    <button onclick="doAuth()">התחבר</button>
   </div>
 </div>
 
@@ -233,14 +312,25 @@ button:hover { background: #059669; }
   <div class="container">
     <header>
       <h1>💰 ShmoopsiePoo</h1>
-      <p>Yael&Amit</p>
+      <p>Yael & Amit</p>
     </header>
 
     <div class="header-bar">
-      <div class="user-info">מחובר: <strong id="userName"></strong></div>
+      <div>
+        <div class="user-info">מחובר: <strong id="userName"></strong></div>
+        <div class="sync-status"><span class="sync-dot"></span> מסונכרן בזמן אמת</div>
+      </div>
       <div class="top-buttons">
-        <button onclick="copyLink()">שתוף</button>
-        <button onclick="logout()">התנתק</button>
+        <button onclick="exportCSV()">📥 ייצוא</button>
+        <button onclick="logout()">🚪 התנתק</button>
+      </div>
+    </div>
+
+    <div class="section" style="padding: 12px 20px;">
+      <div class="month-filter">
+        <label>סינון לפי חודש:</label>
+        <input type="month" id="filterMonth" onchange="render()">
+        <button style="width:auto; padding:8px 16px; background:#334155;" onclick="document.getElementById('filterMonth').value=''; render();">הכל</button>
       </div>
     </div>
 
@@ -272,7 +362,7 @@ button:hover { background: #059669; }
         <h3>הוסף הכנסה</h3>
         <div class="input-group">
           <input type="date" id="incDate">
-          <input type="number" id="incAmount" placeholder="סכום">
+          <input type="number" id="incAmount" placeholder="סכום" inputmode="numeric">
           <input type="text" id="incDesc" placeholder="תיאור">
           <select id="incCat">
             <option value="">בחר קטגוריה</option>
@@ -282,7 +372,7 @@ button:hover { background: #059669; }
             <option value="אחר">אחר</option>
           </select>
         </div>
-        <button onclick="addIncome()">הוסף הכנסה</button>
+        <button onclick="addItem('income')">➕ הוסף הכנסה</button>
         <div id="incomeList" style="margin-top:15px"></div>
       </div>
     </div>
@@ -292,7 +382,7 @@ button:hover { background: #059669; }
         <h3>הוסף הוצאה</h3>
         <div class="input-group">
           <input type="date" id="expDate">
-          <input type="number" id="expAmount" placeholder="סכום">
+          <input type="number" id="expAmount" placeholder="סכום" inputmode="numeric">
           <input type="text" id="expDesc" placeholder="תיאור">
           <select id="expCat">
             <option value="">בחר קטגוריה</option>
@@ -304,7 +394,7 @@ button:hover { background: #059669; }
             <option value="אחר">אחר</option>
           </select>
         </div>
-        <button onclick="addExpense()">הוסף הוצאה</button>
+        <button onclick="addItem('expense')">➕ הוסף הוצאה</button>
         <div id="expenseList" style="margin-top:15px"></div>
       </div>
     </div>
@@ -314,60 +404,72 @@ button:hover { background: #059669; }
 </div>
 
 <script>
+// ========== FIREBASE INIT ==========
 const firebaseConfig = {
-    apiKey: "AIzaSyB4nqZLcFV5z3Q4K8xWzJxDZ0q8s9K8z5M",
-    authDomain: "shmoopsieepoo1202.firebaseapp.com",
-    databaseURL: "https://shmoopsieepoo1202-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "ShmoopsiePoo1202",
-    storageBucket: "shmoopsieepoo1202.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef1234567890"
+  apiKey: "AIzaSyDX0XDsaB5_JEDH7chBGMVyeUeqPnpwVlE",
+  authDomain: "shmoopsiepoo1202.firebaseapp.com",
+  databaseURL: "https://shmoopsiepoo1202-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "shmoopsiepoo1202",
+  storageBucket: "shmoopsiepoo1202.firebasestorage.app",
+  messagingSenderId: "589285900622",
+  appId: "1:589285900622:web:1ac7d9b5181266f20b1e1f",
+  measurementId: "G-63NHSQ3536"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const dbRef = db.ref('shmoopsiepoo');
 
-let user = '';
-let data = { income: [], expense: [] };
-
-const passwords = {
-    'Amit': 'amit171092',
-    'Yael': 'yael120294'
+// ========== AUTH ==========
+const USERS = {
+  'Amit': 'amit171092',
+  'Yael': 'yael120294'
 };
+
+let currentUser = '';
+let data = { income: [], expense: [] };
 
 function doAuth() {
   const name = document.getElementById('name').value.trim();
   const pass = document.getElementById('pass').value.trim();
-  
-  console.log('Trying:', name, pass);
-  
-  if(!name || !pass) {
-    alert('אנא הכנס שם וסיסמה');
+  const errorEl = document.getElementById('loginError');
+
+  if (!name || !pass) {
+    errorEl.textContent = 'אנא הכנס שם וסיסמה';
+    errorEl.style.display = 'block';
     return;
   }
-  
-  if(passwords[name] === pass) {
-    user = name;
-    localStorage.setItem('user', name);
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('userName').textContent = name;
-    setToday();
-    doLoad();
-    setInterval(doLoad, 2000);
+
+  if (USERS[name] && USERS[name] === pass) {
+    currentUser = name;
+    localStorage.setItem('shmoopsiepoo_user', name);
+    errorEl.style.display = 'none';
+    showApp();
   } else {
-    alert('שם או סיסמה שגויים');
+    errorEl.textContent = 'שם או סיסמה שגויים';
+    errorEl.style.display = 'block';
   }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('login').style.display !== 'none') {
+    doAuth();
+  }
+});
+
+function showApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('userName').textContent = currentUser;
+  setToday();
+  startListening();
 }
 
 function logout() {
-  localStorage.removeItem('user');
+  localStorage.removeItem('shmoopsiepoo_user');
+  dbRef.off();
+  currentUser = '';
   location.reload();
-}
-
-function copyLink() {
-  navigator.clipboard.writeText(window.location.href);
-  alert('הלינק הועתק!');
 }
 
 function setToday() {
@@ -376,96 +478,118 @@ function setToday() {
   document.getElementById('expDate').value = d;
 }
 
-function addIncome() {
-  const d = document.getElementById('incDate').value;
-  const a = parseFloat(document.getElementById('incAmount').value);
-  const desc = document.getElementById('incDesc').value.trim();
-  const c = document.getElementById('incCat').value;
-  
-  if(!d || !a || !desc || !c) { alert('מלא את כל השדות'); return; }
-  
-  data.income.push({ d, a, desc, c, id: Date.now() });
-  doSave();
-  document.getElementById('incAmount').value = '';
-  document.getElementById('incDesc').value = '';
-  document.getElementById('incCat').value = '';
-  confetti({ particleCount: 100, spread: 50 });
-}
-
-function addExpense() {
-  const d = document.getElementById('expDate').value;
-  const a = parseFloat(document.getElementById('expAmount').value);
-  const desc = document.getElementById('expDesc').value.trim();
-  const c = document.getElementById('expCat').value;
-  
-  if(!d || !a || !desc || !c) { alert('מלא את כל השדות'); return; }
-  
-  data.expense.push({ d, a, desc, c, id: Date.now() });
-  doSave();
-  document.getElementById('expAmount').value = '';
-  document.getElementById('expDesc').value = '';
-  document.getElementById('expCat').value = '';
-}
-
-function deleteIncome(id) {
-  data.income = data.income.filter(x => x.id !== id);
-  doSave();
-}
-
-function deleteExpense(id) {
-  data.expense = data.expense.filter(x => x.id !== id);
-  doSave();
-}
-
-function doSave() {
-  db.ref('shmoopsiepoo').set(data);
-  doLoad();
-}
-
-function doLoad() {
-  db.ref('shmoopsiepoo').once('value', (snap) => {
-    if(snap.val()) data = snap.val();
+// ========== FIREBASE REALTIME LISTENER ==========
+function startListening() {
+  dbRef.on('value', function(snapshot) {
+    const val = snapshot.val();
+    if (val) {
+      data.income = val.income ? Object.values(val.income) : [];
+      data.expense = val.expense ? Object.values(val.expense) : [];
+    } else {
+      data = { income: [], expense: [] };
+    }
     render();
   });
 }
 
+// ========== ADD / DELETE ==========
+function addItem(type) {
+  const prefix = type === 'income' ? 'inc' : 'exp';
+  const d = document.getElementById(prefix + 'Date').value;
+  const a = parseFloat(document.getElementById(prefix + 'Amount').value);
+  const desc = document.getElementById(prefix + 'Desc').value.trim();
+  const c = document.getElementById(prefix + 'Cat').value;
+
+  if (!d || !a || a <= 0 || !desc || !c) {
+    alert('מלא את כל השדות');
+    return;
+  }
+
+  const id = Date.now().toString();
+  const item = { d, a, desc, c, id, by: currentUser };
+
+  dbRef.child(type).child(id).set(item);
+
+  document.getElementById(prefix + 'Amount').value = '';
+  document.getElementById(prefix + 'Desc').value = '';
+  document.getElementById(prefix + 'Cat').value = '';
+
+  if (type === 'income' && typeof confetti === 'function') {
+    confetti({ particleCount: 100, spread: 60, origin: { y: 0.7 } });
+  }
+}
+
+function deleteItem(type, id) {
+  if (!confirm('למחוק?')) return;
+  dbRef.child(type).child(id).remove();
+}
+
+// ========== RENDER ==========
 function render() {
-  const ti = data.income ? data.income.reduce((s, x) => s + x.a, 0) : 0;
-  const te = data.expense ? data.expense.reduce((s, x) => s + x.a, 0) : 0;
-  
+  const filterMonth = document.getElementById('filterMonth').value;
+
+  let incomes = data.income || [];
+  let expenses = data.expense || [];
+
+  if (filterMonth) {
+    incomes = incomes.filter(x => x.d && x.d.startsWith(filterMonth));
+    expenses = expenses.filter(x => x.d && x.d.startsWith(filterMonth));
+  }
+
+  incomes.sort((a, b) => (b.d || '').localeCompare(a.d || ''));
+  expenses.sort((a, b) => (b.d || '').localeCompare(a.d || ''));
+
+  const ti = incomes.reduce((s, x) => s + (x.a || 0), 0);
+  const te = expenses.reduce((s, x) => s + (x.a || 0), 0);
+  const bal = ti - te;
+
   document.getElementById('totalIncome').textContent = '₪' + ti.toLocaleString('he-IL');
   document.getElementById('totalExpense').textContent = '₪' + te.toLocaleString('he-IL');
-  document.getElementById('balance').textContent = '₪' + (ti - te).toLocaleString('he-IL');
-  
-  document.getElementById('incomeList').innerHTML = (data.income || []).map(x => `
-    <div class="item">
-      <div class="item-left">
-        <div class="item-title">${x.desc}</div>
-        <div class="item-meta">${x.d} • ${x.c}</div>
+
+  const balEl = document.getElementById('balance');
+  balEl.textContent = '₪' + bal.toLocaleString('he-IL');
+  balEl.className = 'stat-value' + (bal < 0 ? ' expense' : '');
+
+  document.getElementById('incomeList').innerHTML = incomes.length === 0
+    ? '<div class="empty-state">אין הכנסות להצגה</div>'
+    : incomes.map(x => `
+      <div class="item">
+        <div class="item-left">
+          <div class="item-title">${esc(x.desc)}</div>
+          <div class="item-meta">${x.d} • ${esc(x.c)}${x.by ? ' • ' + esc(x.by) : ''}</div>
+        </div>
+        <div class="item-actions">
+          <div class="item-amount income">+₪${(x.a || 0).toLocaleString('he-IL')}</div>
+          <button class="delete-btn" onclick="deleteItem('income','${x.id}')">🗑</button>
+        </div>
       </div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="item-amount income">+₪${x.a.toLocaleString('he-IL')}</div>
-        <button class="delete-btn" onclick="deleteIncome(${x.id})">מחק</button>
+    `).join('');
+
+  document.getElementById('expenseList').innerHTML = expenses.length === 0
+    ? '<div class="empty-state">אין הוצאות להצגה</div>'
+    : expenses.map(x => `
+      <div class="item">
+        <div class="item-left">
+          <div class="item-title">${esc(x.desc)}</div>
+          <div class="item-meta">${x.d} • ${esc(x.c)}${x.by ? ' • ' + esc(x.by) : ''}</div>
+        </div>
+        <div class="item-actions">
+          <div class="item-amount expense">-₪${(x.a || 0).toLocaleString('he-IL')}</div>
+          <button class="delete-btn" onclick="deleteItem('expense','${x.id}')">🗑</button>
+        </div>
       </div>
-    </div>
-  `).join('');
-  
-  document.getElementById('expenseList').innerHTML = (data.expense || []).map(x => `
-    <div class="item">
-      <div class="item-left">
-        <div class="item-title">${x.desc}</div>
-        <div class="item-meta">${x.d} • ${x.c}</div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="item-amount expense">-₪${x.a.toLocaleString('he-IL')}</div>
-        <button class="delete-btn" onclick="deleteExpense(${x.id})">מחק</button>
-      </div>
-    </div>
-  `).join('');
-  
+    `).join('');
+
   document.getElementById('lastUpdate').textContent = new Date().toLocaleString('he-IL');
 }
 
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+// ========== TABS ==========
 function switchTab(t) {
   document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
@@ -473,16 +597,33 @@ function switchTab(t) {
   document.querySelector(`[onclick="switchTab('${t}')"]`).classList.add('active');
 }
 
-if(localStorage.getItem('user')) {
-  user = localStorage.getItem('user');
-  document.getElementById('login').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('userName').textContent = user;
-  setToday();
-  doLoad();
-  setInterval(doLoad, 2000);
+// ========== EXPORT CSV ==========
+function exportCSV() {
+  const lines = ['סוג,תאריך,תיאור,קטגוריה,סכום,נוסף ע"י'];
+  (data.income || []).forEach(x => lines.push(`הכנסה,${x.d},${x.desc},${x.c},${x.a},${x.by || ''}`));
+  (data.expense || []).forEach(x => lines.push(`הוצאה,${x.d},${x.desc},${x.c},${x.a},${x.by || ''}`));
+
+  const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'shmoopsiepoo_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
 }
+
+// ========== AUTO LOGIN ==========
+(function() {
+  const saved = localStorage.getItem('shmoopsiepoo_user');
+  if (saved && USERS[saved]) {
+    currentUser = saved;
+    showApp();
+  }
+})();
 </script>
 
 </body>
 </html>
+```
+
+תדביק את הכל ב-`index.html` בגיטהאב, ואל תשכח לוודא שה-Rules ב-Firebase מוגדרים ל-`read: true, write: true`.
