@@ -330,10 +330,18 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-// פונקציית התחברות חלקה בעזרת הפניה (מצוין לטלפונים)
 function doGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithRedirect(provider);
+  // ננסה פופ-אפ, ואם הדפדפן חוסם אותו - המערכת תדע להתמודד
+  firebase.auth().signInWithPopup(provider).catch(err => {
+    if (err.code === 'auth/popup-blocked') {
+      // אם הפופ-אפ חסום, ננסה בכל זאת הפניה כברירת מחדל
+      firebase.auth().signInWithRedirect(provider);
+    } else {
+      document.getElementById('loginErr').textContent = 'שגיאה: ' + err.message;
+      document.getElementById('loginErr').style.display = 'block';
+    }
+  });
 }
 
 function toggleTheme(){
