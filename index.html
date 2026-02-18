@@ -443,8 +443,7 @@ function openModal(type,item){
 function closeModal(){document.getElementById('addModal').classList.remove('open');editId=null}
 function renderModalCats(){
   const cats=D.categories||[];
-  // שימוש ב-data attribute במקום onclick ישיר
-  document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" data-cat="${esc(c)}">${esc(c)}</div>`).join('');
+  document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</div>`).join('');
 }
 function addNewCat(){
   const v=document.getElementById('newCatInput').value.trim();if(!v)return;
@@ -496,10 +495,10 @@ function saveEditCat(){
 function renderCatPage(){
   const cats=D.categories||[];
   if(!cats.length){document.getElementById('catList').innerHTML='<div class="empty" style="padding:12px">אין קטגוריות. הוסף למטה!</div>';return}
-  // שימוש ב-data attribute במקום onclick ישיר
   document.getElementById('catList').innerHTML=cats.map(c=>{
     const count=getCatCount(c);
-    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button class="edit-cat-btn" data-cat="${esc(c)}">✏️</button><button class="delete-cat-btn" data-cat="${esc(c)}">🗑</button></div></div>`;
+    // שימוש ב-encodeURIComponent לשמירת השם בצורה בטוחה
+    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button class="edit-cat-btn" data-cat="${encodeURIComponent(c)}">✏️</button><button class="delete-cat-btn" data-cat="${encodeURIComponent(c)}">🗑</button></div></div>`;
   }).join('');
 }
 
@@ -599,8 +598,7 @@ function genInsights(inc,exp){
 
 function rInc(){
   const{inc}=gF();const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
-  // שימוש ב-data attribute במקום onclick ישיר (אפשר לשפר בהמשך)
-  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</button>`).join('');
   const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumI',fl,'gn');document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
@@ -609,8 +607,7 @@ function rInc(){
 
 function rExp(){
   const{exp}=gF();const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort()];
-  // שימוש ב-data attribute במקום onclick ישיר
-  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</button>`).join('');
   const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
@@ -623,34 +620,43 @@ function go(p){curPg=p;['S', 'I', 'E', 'T'].forEach((x,i)=>{document.getElementB
 document.addEventListener('click', function(e) {
   // מחיקת קטגוריה
   if (e.target.classList.contains('delete-cat-btn')) {
-    const catName = e.target.getAttribute('data-cat');
-    if (catName) deleteCat(catName);
+    const raw = e.target.getAttribute('data-cat');
+    if (raw) {
+      const catName = decodeURIComponent(raw);
+      deleteCat(catName);
+    }
   }
   // עריכת קטגוריה
   if (e.target.classList.contains('edit-cat-btn')) {
-    const catName = e.target.getAttribute('data-cat');
-    if (catName) openEditCat(catName);
+    const raw = e.target.getAttribute('data-cat');
+    if (raw) {
+      const catName = decodeURIComponent(raw);
+      openEditCat(catName);
+    }
   }
   // בחירת קטגוריה במודל
   if (e.target.classList.contains('cat-chip')) {
-    const catName = e.target.getAttribute('data-cat');
-    if (catName) {
+    const raw = e.target.getAttribute('data-cat');
+    if (raw) {
+      const catName = decodeURIComponent(raw);
       modalCat = modalCat === catName ? '' : catName;
       renderModalCats(); // מרנדר מחדש את השבבים
     }
   }
   // סינון הכנסות לפי קטגוריה
   if (e.target.closest('#iCh') && e.target.classList.contains('fp')) {
-    const cat = e.target.getAttribute('data-cat');
-    if (cat !== null) {
+    const raw = e.target.getAttribute('data-cat');
+    if (raw) {
+      const cat = decodeURIComponent(raw);
       iCt = cat;
       rInc();
     }
   }
   // סינון הוצאות לפי קטגוריה
   if (e.target.closest('#eCh') && e.target.classList.contains('fp')) {
-    const cat = e.target.getAttribute('data-cat');
-    if (cat !== null) {
+    const raw = e.target.getAttribute('data-cat');
+    if (raw) {
+      const cat = decodeURIComponent(raw);
       eCt = cat;
       rExp();
     }
