@@ -103,11 +103,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .fp.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .cn{font-size:10px;color:var(--text-muted);margin-bottom:6px}
 
-.tabs{display:flex;background:var(--bg-input);border-radius:10px;padding:3px;margin-bottom:12px}
-.tab{flex:1;padding:8px 0;border-radius:8px;border:none;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;background:transparent;color:var(--text-muted)}
-.tab.on{background:rgba(255,255,255,0.1);color:var(--accent)}
-[data-theme="light"] .tab.on{background:#fff;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
-
 .insight-item{font-size:13px;margin-bottom:8px;padding:10px 12px;background:var(--bg-input);border-radius:8px;border-right:4px solid var(--accent);line-height:1.4}
 
 .fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none;cursor:pointer;transition:transform 0.2s}
@@ -134,6 +129,23 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .btn-c{background:var(--bg-input);color:var(--text-main)}
 .btn-s{background:var(--accent);color:white}
 .btn-s:disabled{opacity:0.7;cursor:wait}
+
+/* Category management */
+.cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
+.cat-item-name{font-size:13px;font-weight:500;color:var(--text-main);flex:1}
+.cat-item-count{font-size:10px;color:var(--text-muted);margin-left:8px;margin-right:8px}
+.cat-item-acts{display:flex;gap:4px}
+.cat-item-acts button{background:none;border:none;font-size:14px;cursor:pointer;opacity:0.6;padding:2px 4px}
+.cat-item-acts button:hover,.cat-item-acts button:active{opacity:1}
+.cat-section-title{font-size:14px;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:6px}
+.cat-add-row{display:flex;gap:8px;margin-top:10px}
+.cat-add-row input{flex:1;padding:8px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;font-size:13px;outline:none}
+.cat-add-row input:focus{border-color:var(--accent)}
+.cat-add-row button{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* Edit cat modal */
+.edit-cat-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.edit-cat-modal.open{display:flex}
 
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 0;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999}
 .nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:3px 8px}
@@ -206,25 +218,35 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <button class="fab exp" onclick="openModal('expense')">+</button>
 </div>
 
+<!-- CATEGORIES PAGE (was Data page) -->
 <div id="pgT" class="pg">
   <div class="cd">
     <div class="ttt">💡 תובנות חכמות</div>
     <div id="insightsBox"></div>
   </div>
-  <div class="tabs">
-    <button class="tab on" id="tI" onclick="setTT('i')">הכנסות</button>
-    <button class="tab" id="tE" onclick="setTT('e')">הוצאות</button>
+
+  <div class="cd">
+    <div class="cat-section-title">💰 קטגוריות הכנסות</div>
+    <div id="incCatList"></div>
+    <div class="cat-add-row">
+      <input type="text" id="newIncCatInput" placeholder="שם קטגוריה חדשה...">
+      <button onclick="addCatFromPage('income')">+ הוסף</button>
+    </div>
   </div>
-  <input class="si" id="tSr" placeholder="🔍 חיפוש..." oninput="rTbl()">
-  <div id="sumT" class="summary-dash"></div>
-  <div class="fr" id="tCh"></div>
-  <div class="cn" id="tCn"></div>
-  <div id="tLs"></div>
+
+  <div class="cd">
+    <div class="cat-section-title">💸 קטגוריות הוצאות</div>
+    <div id="expCatList"></div>
+    <div class="cat-add-row">
+      <input type="text" id="newExpCatInput" placeholder="שם קטגוריה חדשה...">
+      <button onclick="addCatFromPage('expense')">+ הוסף</button>
+    </div>
+  </div>
 </div>
 
 </div>
 
-<!-- MODAL -->
+<!-- ADD/EDIT MODAL -->
 <div class="modal" id="addModal">
   <div class="m-box">
     <div class="m-tl" id="modalTitle">הוספת הכנסה</div>
@@ -246,12 +268,24 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   </div>
 </div>
 
+<!-- EDIT CATEGORY MODAL -->
+<div class="edit-cat-modal" id="editCatModal">
+  <div class="m-box">
+    <div class="m-tl">עריכת קטגוריה</div>
+    <div class="inp-g"><label class="inp-l">שם חדש</label><input type="text" class="inp" id="editCatName"></div>
+    <div class="m-acts">
+      <button class="btn btn-c" onclick="closeEditCat()">ביטול</button>
+      <button class="btn btn-s" onclick="saveEditCat()">עדכן</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <div class="nav">
   <button class="nb on" id="n0" onclick="go('S')"><span class="ic">📊</span><span class="lb">סיכום</span></button>
   <button class="nb off" id="n1" onclick="go('I')"><span class="ic">💰</span><span class="lb">הכנסות</span></button>
   <button class="nb off" id="n2" onclick="go('E')"><span class="ic">💸</span><span class="lb">הוצאות</span></button>
-  <button class="nb off" id="n3" onclick="go('T')"><span class="ic">📋</span><span class="lb">נתונים</span></button>
+  <button class="nb off" id="n3" onclick="go('T')"><span class="ic">⚙️</span><span class="lb">קטגוריות</span></button>
 </div>
 
 </div>
@@ -274,7 +308,8 @@ const EC=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899',
 const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'];
 
 let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
-let iCt='הכל',eCt='הכל',tT='i',tCt='הכל';
+let iCt='הכל',eCt='הכל';
+let editCatType='',editCatOld='';
 let D={income:[],expense:[],categories:{income:[],expense:[]}};
 
 // AUTH
@@ -286,7 +321,6 @@ function doAuth(){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doAuth()});
 function showApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainApp').style.display='block';startListening()}
-function logout(){localStorage.removeItem('sp_user');dbRef.off();location.reload()}
 
 // THEME
 function toggleTheme(){
@@ -326,11 +360,10 @@ function initDates(){
     {l:'הכל',s:'2023-01-01',e:'2030-12-31'}
   ];
   document.getElementById('presets').innerHTML=P.map(p=>`<button class="pb" onclick="sP(this,'${p.s}','${p.e}')">${p.l}</button>`).join('');
-  document.querySelector('.pb').classList.add('on');
-  applyFilter();
+  document.querySelector('.pb').classList.add('on');applyFilter();
 }
 function sP(el,a,b){document.querySelectorAll('.pb').forEach(x=>x.classList.remove('on'));el.classList.add('on');document.getElementById('sd').value=a;document.getElementById('ed').value=b;applyFilter()}
-function applyFilter(){s1=document.getElementById('sd').value;s2=document.getElementById('ed').value;document.getElementById('pLbl').textContent=new Date(s1).toLocaleDateString('he-IL')+' - '+new Date(s2).toLocaleDateString('he-IL');iCt='הכל';eCt='הכל';tCt='הכל';renderAll()}
+function applyFilter(){s1=document.getElementById('sd').value;s2=document.getElementById('ed').value;document.getElementById('pLbl').textContent=new Date(s1).toLocaleDateString('he-IL')+' - '+new Date(s2).toLocaleDateString('he-IL');iCt='הכל';eCt='הכל';renderAll()}
 
 // HELPERS
 function fmt(n){return'₪'+Math.round(n).toLocaleString('he-IL')}
@@ -344,73 +377,108 @@ function sumDash(id,arr,cls){
   document.getElementById(id).innerHTML=`<div><div class="sd-ttl">סה״כ</div><div class="sd-val ${cls}">${fmt(t)}</div></div><div style="border-right:1px solid var(--border-color);border-left:1px solid var(--border-color)"><div class="sd-ttl">פעולות</div><div class="sd-val">${c}</div></div><div><div class="sd-ttl">ממוצע</div><div class="sd-val">${fmt(a)}</div></div>`;
 }
 
-// MODAL - NEW + EDIT
+// ========== ADD/EDIT MODAL ==========
 function openModal(type,item){
   curType=type;editId=null;modalCat='';
   document.getElementById('nDate').value=new Date().toISOString().split('T')[0];
-  document.getElementById('nAmt').value='';
-  document.getElementById('nDesc').value='';
-  document.getElementById('newCatInput').value='';
+  document.getElementById('nAmt').value='';document.getElementById('nDesc').value='';document.getElementById('newCatInput').value='';
   document.getElementById('modalTitle').textContent=type==='income'?'הוספת הכנסה':'הוספת הוצאה';
   document.getElementById('saveBtn').textContent='שמור';
-
   if(item){
-    editId=item.id;
-    document.getElementById('nDate').value=item.d;
-    document.getElementById('nAmt').value=item.a;
-    document.getElementById('nDesc').value=item.desc;
-    modalCat=item.c||'';
+    editId=item.id;document.getElementById('nDate').value=item.d;document.getElementById('nAmt').value=item.a;
+    document.getElementById('nDesc').value=item.desc;modalCat=item.c||'';
     document.getElementById('modalTitle').textContent=type==='income'?'עריכת הכנסה':'עריכת הוצאה';
     document.getElementById('saveBtn').textContent='עדכן';
   }
-
-  renderModalCats();
-  document.getElementById('addModal').classList.add('open');
+  renderModalCats();document.getElementById('addModal').classList.add('open');
 }
 function closeModal(){document.getElementById('addModal').classList.remove('open');editId=null}
-
 function renderModalCats(){
   const cats=D.categories[curType]||[];
   document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" onclick="selCat('${esc(c)}')">${esc(c)}</div>`).join('');
 }
 function selCat(c){modalCat=modalCat===c?'':c;renderModalCats()}
-
 function addNewCat(){
-  const v=document.getElementById('newCatInput').value.trim();
-  if(!v)return;
-  const cats=D.categories[curType]||[];
-  if(cats.includes(v)){alert('קיימת');return}
-  cats.push(v);
-  dbRef.child('categories').child(curType).set(cats);
-  document.getElementById('newCatInput').value='';
-  modalCat=v;
+  const v=document.getElementById('newCatInput').value.trim();if(!v)return;
+  const cats=D.categories[curType]||[];if(cats.includes(v)){alert('קיימת');return}
+  cats.push(v);dbRef.child('categories').child(curType).set(cats);
+  document.getElementById('newCatInput').value='';modalCat=v;
 }
-
 function saveItem(){
-  const d=document.getElementById('nDate').value;
-  const a=parseFloat(document.getElementById('nAmt').value);
-  const desc=document.getElementById('nDesc').value.trim();
+  const d=document.getElementById('nDate').value,a=parseFloat(document.getElementById('nAmt').value),desc=document.getElementById('nDesc').value.trim();
   if(!d||!a||a<=0||!desc){alert('מלא תאריך, סכום ותיאור');return}
   if(!modalCat){alert('בחר קטגוריה');return}
-
-  if(editId){
-    // UPDATE existing
-    dbRef.child(curType).child(editId).update({d,a,desc,c:modalCat,by:currentUser});
-  }else{
-    // NEW
-    const id=Date.now().toString();
-    dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
-    if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}});
-  }
+  if(editId){dbRef.child(curType).child(editId).update({d,a,desc,c:modalCat,by:currentUser})}
+  else{const id=Date.now().toString();dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}})}
   closeModal();
 }
-
 function deleteItem(type,id){if(confirm('למחוק?'))dbRef.child(type).child(id).remove()}
+function editItem(type,id){const arr=type==='income'?D.income:D.expense;const item=arr.find(r=>r.id===id);if(item)openModal(type,item)}
 
-function editItem(type,id){
+// ========== CATEGORY MANAGEMENT ==========
+function getCatUsageCount(type,catName){
   const arr=type==='income'?D.income:D.expense;
-  const item=arr.find(r=>r.id===id);
-  if(item)openModal(type,item);
+  return arr.filter(r=>r.c===catName).length;
+}
+
+function addCatFromPage(type){
+  const inputId=type==='income'?'newIncCatInput':'newExpCatInput';
+  const v=document.getElementById(inputId).value.trim();if(!v)return;
+  const cats=D.categories[type]||[];
+  if(cats.includes(v)){alert('קטגוריה כבר קיימת');return}
+  cats.push(v);dbRef.child('categories').child(type).set(cats);
+  document.getElementById(inputId).value='';
+}
+
+function deleteCatFromPage(type,catName){
+  const count=getCatUsageCount(type,catName);
+  let msg='למחוק את הקטגוריה "'+catName+'"?';
+  if(count>0)msg+='\nשים לב: יש '+count+' רשומות שמשתמשות בקטגוריה הזו. הרשומות לא יימחקו, אבל הקטגוריה תוסר מהרשימה.';
+  if(!confirm(msg))return;
+  const cats=(D.categories[type]||[]).filter(c=>c!==catName);
+  dbRef.child('categories').child(type).set(cats);
+}
+
+function openEditCat(type,oldName){
+  editCatType=type;editCatOld=oldName;
+  document.getElementById('editCatName').value=oldName;
+  document.getElementById('editCatModal').classList.add('open');
+}
+function closeEditCat(){document.getElementById('editCatModal').classList.remove('open')}
+
+function saveEditCat(){
+  const newName=document.getElementById('editCatName').value.trim();
+  if(!newName){alert('הכנס שם');return}
+  if(newName===editCatOld){closeEditCat();return}
+  const cats=D.categories[editCatType]||[];
+  if(cats.includes(newName)){alert('קטגוריה בשם זה כבר קיימת');return}
+
+  // Update category list
+  const idx=cats.indexOf(editCatOld);
+  if(idx!==-1){cats[idx]=newName;dbRef.child('categories').child(editCatType).set(cats)}
+
+  // Update all items that use this category
+  const arr=editCatType==='income'?D.income:D.expense;
+  const updates={};
+  arr.forEach(r=>{if(r.c===editCatOld)updates[r.id+'/c']=newName});
+  if(Object.keys(updates).length>0)dbRef.child(editCatType).update(updates);
+
+  closeEditCat();
+}
+
+function renderCatPage(){
+  ['income','expense'].forEach(type=>{
+    const listId=type==='income'?'incCatList':'expCatList';
+    const cats=D.categories[type]||[];
+    if(cats.length===0){
+      document.getElementById(listId).innerHTML='<div class="empty" style="padding:12px">אין קטגוריות. הוסף אחת למטה!</div>';
+      return;
+    }
+    document.getElementById(listId).innerHTML=cats.map(c=>{
+      const count=getCatUsageCount(type,c);
+      return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button onclick="openEditCat('${type}','${esc(c)}')" title="ערוך">✏️</button><button onclick="deleteCatFromPage('${type}','${esc(c)}')" title="מחק">🗑</button></div></div>`;
+    }).join('');
+  });
 }
 
 // ITEM CARD
@@ -423,20 +491,17 @@ function mkC(r,t){
 function renderAll(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
-
   document.getElementById('kpis').innerHTML=`
     <div class="kp"><div class="kl">סה״כ הכנסות</div><div class="kv tl">${fK(ti)}</div></div>
     <div class="kp"><div class="kl">סה״כ הוצאות</div><div class="kv or">${fK(te)}</div></div>
     <div class="kp"><div class="kl">רווח לתקופה</div><div class="kv ${pr>=0?'gn':'rd'}">${fK(pr)}</div></div>
     <div class="kp"><div class="kl">ממוצע חודשי</div><div class="kv bl">${fK(ti/gMC())}</div></div>`;
-
   const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
   let sb='<div class="sbt">סיכום הכנסות לתקופה</div>';
   Object.entries(icBC).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{sb+=`<div class="sr"><span>${esc(k)}</span><span class="tl">${fmt(v)}</span></div>`});
   sb+=`<div class="sr" style="border-top:2px solid var(--border-color);margin-top:4px;padding-top:4px"><span style="font-weight:700">סה״כ</span><span class="tl" style="font-weight:700;font-size:15px">${fmt(ti)}</span></div>`;
   document.getElementById('sBox').innerHTML=sb;
-
-  rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);genInsights(inc,exp);rInc();rExp();rTbl();
+  rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);genInsights(inc,exp);rInc();rExp();renderCatPage();
 }
 
 function rBar(inc,exp){
@@ -494,17 +559,6 @@ function rExp(){
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
   document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
-}
-
-function setTT(t){tT=t;tCt='הכל';document.getElementById('tI').className='tab '+(t==='i'?'on':'');document.getElementById('tE').className='tab '+(t==='e'?'on':'');rTbl()}
-function rTbl(){
-  const{inc,exp}=gF(),recs=tT==='i'?inc:exp;
-  const cats=['הכל',...[...new Set(recs.map(r=>r.c).filter(Boolean))].sort()];
-  document.getElementById('tCh').innerHTML=cats.map(c=>`<button class="fp ${tCt===c?'on':''}" onclick="tCt='${c}';rTbl()">${esc(c)}</button>`).join('');
-  const q=(document.getElementById('tSr').value||'').toLowerCase();
-  const fl=recs.filter(r=>(tCt==='הכל'||r.c===tCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumT',fl,tT==='i'?'gn':'or');document.getElementById('tCn').textContent=fl.length+' תוצאות';
-  document.getElementById('tLs').innerHTML=fl.length?fl.map(r=>mkC(r,tT)).join(''):'<div class="empty">אין נתונים</div>';
 }
 
 function go(p){curPg=p;['S','I','E','T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
