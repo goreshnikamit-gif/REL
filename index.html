@@ -449,8 +449,12 @@ function renderModalCats(){
 function addNewCat(){
   const v=document.getElementById('newCatInput').value.trim();if(!v)return;
   const cats=D.categories||[];if(cats.includes(v)){alert('קיימת');return}
-  cats.push(v);dbRef.child('categories').set(cats);
-  document.getElementById('newCatInput').value='';modalCat=v;
+  cats.push(v);
+  D.categories=cats;
+  dbRef.child('categories').set(cats);
+  document.getElementById('newCatInput').value='';
+  modalCat=v;
+  renderModalCats();
 }
 function saveItem(){
   const d=document.getElementById('nDate').value,a=parseFloat(document.getElementById('nAmt').value),desc=document.getElementById('nDesc').value.trim();
