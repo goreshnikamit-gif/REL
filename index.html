@@ -146,8 +146,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:600;font-family:inherit;cursor:pointer;font-size:14px}
 .btn-c{background:var(--bg-input);color:var(--text-main)}
 .btn-s{background:var(--accent);color:white}
-
-.cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
+  .cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
 .cat-item-name{font-size:13px;font-weight:500;color:var(--text-main);flex:1}
 .cat-item-count{font-size:10px;color:var(--text-muted);margin-left:8px;margin-right:8px}
 .cat-item-acts{display:flex;gap:4px}
@@ -241,7 +240,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 
 <div id="pgT" class="pg">
   <div class="cd">
-    <div class="ttt">💡 תובנות חכמות</div>
+    <div class="ttt">💡 תובנות חכמות וניתוח חיסכון</div>
     <div id="insightsBox"></div>
   </div>
   <div class="cd">
@@ -322,7 +321,6 @@ let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=nul
 let iCt='הכל',eCt='הכל',editCatOld='';
 let D={income:[],expense:[],categories:[]};
 
-// --- פונקציית המדבקה - 2 שניות מלאות ---
 function showSticker() {
   const overlay = document.getElementById('stickerOverlay');
   overlay.style.display = 'flex';
@@ -554,31 +552,48 @@ function rExpC(exp,total){
   });document.getElementById('eCats').innerHTML=h||'<div class="empty">אין הוצאות</div>';
 }
 
-// ========== תובנות חכמות מורחבות ==========
+// ========== מנוע התובנות המורחב - 7 תובנות חזקות ==========
 function genInsights(inc,exp){
   let ins=[];
-  const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0);
+  const ti=inc.reduce((s,r)=>s+r.a,0), te=exp.reduce((s,r)=>s+r.a,0), saving = ti-te;
   
-  if(ti>te && te>0) ins.push(`המצב מעולה! הכנסות גבוהות מהוצאות ב-<b>${fmt(ti-te)}</b>`);
-  if(te>ti) ins.push(`שים לב: הוצאות עלו על הכנסות ב-<b>${fmt(te-ti)}</b>`);
-  
-  // השוואה לחודש קודם
-  const prevMonthStart = new Date(new Date(s1).setMonth(new Date(s1).getMonth()-1)).toISOString().slice(0,10);
-  const prevMonthEnd = new Date(new Date(s1).setDate(0)).toISOString().slice(0,10);
-  const prevExp = D.expense.filter(r=>r.d>=prevMonthStart && r.d<=prevMonthEnd).reduce((s,r)=>s+r.a,0);
-  
-  if(prevExp > 0){
-    const diff = ((te-prevExp)/prevExp*100).toFixed(1);
-    ins.push(`הוצאות לעומת חודש שעבר: <b style="color:${te > prevExp ? '#f87171' : '#34d399'}">${Math.abs(diff)}%</b> (${te > prevExp ? 'עליה' : 'ירידה'})`);
+  // 1. ניתוח יחס חיסכון
+  if(ti>0){
+    const rate = ((saving/ti)*100).toFixed(1);
+    const text = rate > 20 ? `מעולה! אתם חוסכים <b>${rate}%</b> מההכנסה` : `שיעור היתרה (חיסכון) הנוכחי הוא <b>${rate}%</b>`;
+    ins.push(text);
   }
 
+  // 2. השוואה לחודש קודם (הוצאות)
+  const ps = new Date(new Date(s1).setMonth(new Date(s1).getMonth()-1)).toISOString().slice(0,10);
+  const pe = new Date(new Date(s1).setDate(0)).toISOString().slice(0,10);
+  const prevExp = D.expense.filter(r=>r.d>=ps && r.d<=pe).reduce((s,r)=>s+r.a,0);
+  if(prevExp > 0){
+    const diff = (((te-prevExp)/prevExp)*100).toFixed(1);
+    ins.push(`הוצאות לעומת חודש שעבר: <b style="color:${te > prevExp ? '#f87171' : '#34d399'}">${Math.abs(diff)}% ${te > prevExp ? 'עליה' : 'ירידה'}</b>`);
+  }
+
+  // 3. הוצאה חריגה (פי 2.5 מהממוצע)
+  const avg = te/(exp.length||1);
+  const outlier = exp.find(r=>r.a > avg*2.5);
+  if(outlier) ins.push(`שימו לב: הוצאה חריגה על <b>${outlier.desc}</b> (${fmt(outlier.a)})`);
+
+  // 4. הקטגוריה הכי כבדה
   const cats={}; exp.forEach(r=>{cats[r.c]=(cats[r.c]||0)+r.a});
   const top = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
-  if(top) ins.push(`הקטגוריה הכי "בזבזנית": <b>${esc(top[0])}</b> (${fmt(top[1])})`);
-  
-  if(inc.length>0) ins.push(`ממוצע הכנסה בודדת: <b>${fmt(ti/inc.length)}</b>`);
+  if(top) ins.push(`מוקד ההוצאות המרכזי בתקופה: <b>${top[0]}</b> (${fmt(top[1])})`);
 
-  document.getElementById('insightsBox').innerHTML=ins.length?ins.map(t=>`<div class="insight-item">${t}</div>`).join(''):'<div class="empty">אין מספיק נתונים</div>';
+  // 5. ניתוח תזרים (חיסכון מצטבר)
+  if(saving < 0) ins.push(`<b style="color:#f87171">אזהרה:</b> החודש הוצאתם <b>${fmt(Math.abs(saving))}</b> יותר ממה שהכנסתם`);
+  else ins.push(`סיכום ביניים: הצלחתם לשמור בצד <b>${fmt(saving)}</b>`);
+
+  // 6. תדירות רכישות
+  if(exp.length > 20) ins.push(`ביצעתם <b>${exp.length}</b> רכישות בתקופה הזו - אולי כדאי לצמצם תדירות?`);
+
+  // 7. יעד הכנסה
+  if(ti > 0 && inc.length > 0) ins.push(`ממוצע הכנסה בודדת עומד על <b>${fmt(ti/inc.length)}</b>`);
+
+  document.getElementById('insightsBox').innerHTML = ins.map(t=>`<div class="insight-item">${t}</div>`).join('') || '<div class="empty">ממתין לנתונים נוספים...</div>';
 }
 
 function rInc(){
@@ -586,7 +601,8 @@ function rInc(){
   document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt='${c}';rInc()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumI',fl,'gn');document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
+  sumDash('sumI',fl,'gn');document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
+  document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
 }
 
 function rExp(){
@@ -594,10 +610,11 @@ function rExp(){
   document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt='${c}';rExp()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumE',fl,'or');document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
+  sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
+  document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
 }
 
-function go(p){curPg=p;['S','I','E','T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
+function go(p){curPg=p;['S', 'I', 'E', 'T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
 
 (function(){if(localStorage.getItem('sp_theme')==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙'}})();
 </script>
