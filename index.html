@@ -27,15 +27,14 @@
 body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system-ui,sans-serif;direction:rtl;min-height:100vh;overflow-x:hidden;padding-bottom:90px;transition:background 0.3s,color 0.3s}
 ::-webkit-scrollbar{display:none}
 
-/* שכבת המדבקה המנצחת - זמן מעודכן ל-2 שניות */
+/* שכבת המדבקה - מעודכן ל-2 שניות */
 #stickerOverlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   display: none; align-items: center; justify-content: center;
   z-index: 200000; pointer-events: none;
 }
 .sticker-img {
-  width: 280px; height: 280px;
-  object-fit: contain;
+  width: 250px; height: 250px;
   animation: stickerPop 2s ease-out forwards;
 }
 @keyframes stickerPop {
@@ -138,7 +137,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .inp:focus{border-color:var(--accent)}
 .cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .cat-chip{padding:6px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:16px;font-size:12px;color:var(--text-sub);cursor:pointer;transition:all 0.2s;font-family:inherit}
-.cat-chip:hover{border-color:var(--accent);color:var(--text-main)}
 .cat-chip.on{background:var(--accent);border-color:var(--accent);color:white}
 .add-cat-row{display:flex;gap:6px;margin-top:6px}
 .add-cat-row input{flex:1;padding:6px 10px;font-size:12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;outline:none}
@@ -175,7 +173,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 <body>
 
 <div id="stickerOverlay">
-  <img src="https://i.postimg.cc/85zK09kC/image.png" class="sticker-img">
+  <img src="סטיקר.58" class="sticker-img" onerror="this.src='https://i.postimg.cc/85zK09kC/image.png'">
 </div>
 
 <div id="loginScreen">
@@ -422,47 +420,7 @@ function shareWhatsApp(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
   const d1=new Date(s1).toLocaleDateString('he-IL'),d2=new Date(s2).toLocaleDateString('he-IL');
-
-  let msg=`💰 *ShmoopsiePoo - סיכום תקופה*\n`;
-  msg+=`📅 ${d1} - ${d2}\n`;
-  msg+=`━━━━━━━━━━━━━━━\n\n`;
-
-  msg+=`📊 *סיכום כללי:*\n`;
-  msg+=`✅ הכנסות: ${fmt(ti)}\n`;
-  msg+=`❌ הוצאות: ${fmt(te)}\n`;
-  msg+=`${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n`;
-
-  const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
-  const incCats=Object.entries(icBC).sort((a,b)=>b[1]-a[1]);
-  if(incCats.length>0){
-    msg+=`💚 *הכנסות לפי קטגוריה:*\n`;
-    incCats.forEach(([k,v])=>{msg+=`  • ${k}: ${fmt(v)}\n`});
-    msg+=`\n`;
-  }
-
-  const ecBC={};exp.forEach(r=>{const c=r.c||'אחר';ecBC[c]=(ecBC[c]||0)+r.a});
-  const expCats=Object.entries(ecBC).sort((a,b)=>b[1]-a[1]);
-  if(expCats.length>0){
-    msg+=`🧡 *הוצאות לפי קטגוריה:*\n`;
-    expCats.forEach(([k,v])=>{msg+=`  • ${k}: ${fmt(v)}\n`});
-    msg+=`\n`;
-  }
-
-  if(inc.length>0){
-    msg+=`📝 *${Math.min(5,inc.length)} הכנסות אחרונות:*\n`;
-    inc.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | +${fmt(r.a)}\n`});
-    msg+=`\n`;
-  }
-
-  if(exp.length>0){
-    msg+=`📝 *${Math.min(5,exp.length)} הוצאות אחרונות:*\n`;
-    exp.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | -${fmt(r.a)}\n`});
-    msg+=`\n`;
-  }
-
-  msg+=`━━━━━━━━━━━━━━━\n`;
-  msg+=`נשלח מ-ShmoopsiePoo 💰`;
-
+  let msg=`💰 *ShmoopsiePoo - סיכום תקופה*\n📅 ${d1} - ${d2}\n━━━━━━━━━━━━━━━\n\n📊 *סיכום כללי:*\n✅ הכנסות: ${fmt(ti)}\n❌ הוצאות: ${fmt(te)}\n${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n━━━━━━━━━━━━━━━\nנשלח מ-ShmoopsiePoo 💰`;
   const url='https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
   window.open(url,'_blank');
 }
@@ -607,7 +565,8 @@ function rInc(){
   document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt='${c}';rInc()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumI',fl,'gn');document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
+  sumDash('sumI',fl,'gn');document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
+  document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
 }
 
 function rExp(){
@@ -615,7 +574,8 @@ function rExp(){
   document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt='${c}';rExp()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumE',fl,'or');document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
+  sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
+  document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
 }
 
 function go(p){curPg=p;['S','I','E','T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
