@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>ShmoopsiePoo - Yael & Amit</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
@@ -30,10 +31,9 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .l-box{background:var(--bg-card);padding:40px 30px;border-radius:24px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border-color)}
 .l-ttl{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#14b8a6,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .l-sub{font-size:14px;color:var(--text-sub);margin-bottom:24px}
-.l-inp{width:100%;padding:12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;color:var(--text-main);font-family:inherit;font-size:14px;outline:none;margin-bottom:10px;text-align:center}
-.l-inp:focus{border-color:var(--accent)}
-.l-btn{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:10px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;margin-top:6px}
-.l-err{color:#f87171;font-size:12px;margin-bottom:8px;display:none}
+.l-btn{width:100%;padding:14px;background:white;color:#333;border:none;border-radius:10px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:background 0.2s}
+.l-btn:hover{background:#f8f9fa}
+.l-err{color:#f87171;font-size:12px;margin-bottom:12px;display:none;line-height:1.4}
 
 .hdr{background:linear-gradient(135deg,#134e4a,#0d9488,#134e4a);padding:16px;padding-top:calc(16px + env(safe-area-inset-top));position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
 .hdr-r{display:flex;align-items:center;justify-content:space-between}
@@ -161,9 +161,10 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
     <div class="l-ttl">💰 ShmoopsiePoo</div>
     <div class="l-sub">Yael & Amit</div>
     <div class="l-err" id="loginErr"></div>
-    <input class="l-inp" type="text" id="lName" placeholder="שם (Amit או Yael)" autocomplete="username">
-    <input class="l-inp" type="password" id="lPass" placeholder="סיסמה" autocomplete="current-password">
-    <button class="l-btn" onclick="doAuth()">התחבר</button>
+    <button class="l-btn" onclick="doGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
+      התחבר עם חשבון גוגל
+    </button>
   </div>
 </div>
 
@@ -174,6 +175,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
     <div><div class="lg">💰 ShmoopsiePoo</div><div class="lg-s">Yael & Amit</div></div>
     <div style="display:flex;align-items:center;gap:4px">
       <button class="ref-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+      <button class="ref-btn" onclick="firebase.auth().signOut()" title="התנתק">🚪</button>
       <div class="plb" id="pLbl"></div>
     </div>
   </div>
@@ -286,7 +288,13 @@ firebase.initializeApp({
 });
 const db=firebase.database(),dbRef=db.ref('shmoopsiepoo');
 
-const USERS={'Amit':'1710','Yael':'1202'};
+// כאן אתה מגדיר מי מורשה להיכנס ואיזה שם יוצמד לו (עמית או יעל)
+// חובה לעדכן את המייל של יעל במקום הדוגמה!!
+const ALLOWED_EMAILS = {
+  'goreshnikamit@gmail.com': 'Amit',
+  'yaelzviy@gmail.com': 'Yael' 
+};
+
 const IC=['#14b8a6','#f97316','#3b82f6','#a78bfa','#ec4899','#eab308'];
 const EC=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
 const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'];
@@ -295,14 +303,35 @@ let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=nul
 let iCt='הכל',eCt='הכל',editCatOld='';
 let D={income:[],expense:[],categories:[]};
 
-function doAuth(){
-  const n=document.getElementById('lName').value.trim(),p=document.getElementById('lPass').value.trim(),err=document.getElementById('loginErr');
-  if(!n||!p){err.textContent='הכנס שם וסיסמה';err.style.display='block';return}
-  if(USERS[n]&&USERS[n]===p){currentUser=n;localStorage.setItem('sp_user',n);err.style.display='none';showApp()}
-  else{err.textContent='שם או סיסמה שגויים';err.style.display='block'}
+// מאזין להתחברות של המשתמש דרך גוגל
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    const email = user.email.toLowerCase();
+    if (ALLOWED_EMAILS[email]) {
+      currentUser = ALLOWED_EMAILS[email];
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      document.getElementById('loginErr').style.display = 'none';
+      startListening();
+    } else {
+      document.getElementById('loginErr').textContent = 'מצטערים, המייל ' + email + ' אינו מורשה לגשת למערכת.';
+      document.getElementById('loginErr').style.display = 'block';
+      firebase.auth().signOut();
+    }
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+  }
+});
+
+// פונקציית התחברות עם פופ-אפ של גוגל
+function doGoogleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider).catch(err => {
+    document.getElementById('loginErr').textContent = 'שגיאה בהתחברות: ' + err.message;
+    document.getElementById('loginErr').style.display = 'block';
+  });
 }
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doAuth()});
-function showApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainApp').style.display='block';startListening()}
 
 function toggleTheme(){
   const isL=document.body.getAttribute('data-theme')==='light';
@@ -370,7 +399,6 @@ function shareWhatsApp(){
   msg+=`❌ הוצאות: ${fmt(te)}\n`;
   msg+=`${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n`;
 
-  // Income by category
   const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
   const incCats=Object.entries(icBC).sort((a,b)=>b[1]-a[1]);
   if(incCats.length>0){
@@ -379,7 +407,6 @@ function shareWhatsApp(){
     msg+=`\n`;
   }
 
-  // Expense by category
   const ecBC={};exp.forEach(r=>{const c=r.c||'אחר';ecBC[c]=(ecBC[c]||0)+r.a});
   const expCats=Object.entries(ecBC).sort((a,b)=>b[1]-a[1]);
   if(expCats.length>0){
@@ -388,14 +415,12 @@ function shareWhatsApp(){
     msg+=`\n`;
   }
 
-  // Last 5 incomes
   if(inc.length>0){
     msg+=`📝 *${Math.min(5,inc.length)} הכנסות אחרונות:*\n`;
     inc.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | +${fmt(r.a)}\n`});
     msg+=`\n`;
   }
 
-  // Last 5 expenses
   if(exp.length>0){
     msg+=`📝 *${Math.min(5,exp.length)} הוצאות אחרונות:*\n`;
     exp.slice(0,5).forEach(r=>{msg+=`  ${r.d} | ${r.desc} | -${fmt(r.a)}\n`});
@@ -483,13 +508,12 @@ function renderCatPage(){
   }).join('');
 }
 
-// ITEM CARD
+// RENDER
 function mkC(r,t){
   const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',type=t==='i'?'income':'expense';
   return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')">🗑</button></div></div></div>`;
 }
 
-// RENDER
 function renderAll(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
@@ -567,8 +591,6 @@ function go(p){curPg=p;['S','I','E','T'].forEach((x,i)=>{document.getElementById
 
 (function(){
   if(localStorage.getItem('sp_theme')==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙'}
-  const saved=localStorage.getItem('sp_user');
-  if(saved&&USERS[saved]){currentUser=saved;showApp()}
 })();
 </script>
 </body>
