@@ -26,7 +26,6 @@
 body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system-ui,sans-serif;direction:rtl;min-height:100vh;overflow-x:hidden;padding-bottom:90px;transition:background 0.3s,color 0.3s}
 ::-webkit-scrollbar{display:none}
 
-/* LOGIN */
 #loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg-body);z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
 .l-box{background:var(--bg-card);padding:40px 30px;border-radius:24px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border-color)}
 .l-ttl{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#14b8a6,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -36,7 +35,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .l-btn{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:10px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;margin-top:6px}
 .l-err{color:#f87171;font-size:12px;margin-bottom:8px;display:none}
 
-/* HEADER */
 .hdr{background:linear-gradient(135deg,#134e4a,#0d9488,#134e4a);padding:16px;padding-top:calc(16px + env(safe-area-inset-top));position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
 .hdr-r{display:flex;align-items:center;justify-content:space-between}
 .lg{font-size:18px;font-weight:800;color:#fff}
@@ -44,7 +42,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .ref-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:14px;font-family:inherit;cursor:pointer;margin-right:5px}
 .plb{color:rgba(255,255,255,0.9);font-size:11px;font-weight:500}
 
-/* DATE BAR */
 .dba{background:var(--bg-card);padding:12px 14px;border-bottom:1px solid var(--border-color);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .dba label{font-size:11px;color:var(--text-sub);font-weight:500}
 .di{border:1px solid var(--border-color);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;color:var(--text-main);background:var(--bg-input);flex:1;min-width:100px;text-align:center}
@@ -53,7 +50,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .pb{padding:4px 9px;border-radius:14px;border:1px solid var(--border-color);font-size:10px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub);white-space:nowrap}
 .pb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-/* CONTENT */
 .ct{padding:12px}
 .kg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .kp{background:var(--bg-input);border-radius:12px;padding:12px 14px;flex:1 1 45%;min-width:135px;border:1px solid var(--border-color)}
@@ -87,15 +83,14 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .crf{height:100%;border-radius:2px}
 .crs{font-size:9px;color:var(--text-muted);display:flex;justify-content:space-between;margin-top:1px}
 
-/* ITEMS */
 .dc{background:var(--bg-card);border-radius:10px;padding:9px 11px;margin-bottom:5px;border:1px solid var(--border-color)}
 .dr{display:flex;justify-content:space-between;align-items:flex-start}
 .dtt{font-size:11px;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dm{font-size:9px;color:var(--text-muted);margin-top:2px;display:flex;gap:5px;align-items:center}
 .dbg{padding:1px 6px;border-radius:10px;font-size:8px;font-weight:500;color:#fff}
 .da{font-size:13px;font-weight:700;margin-right:8px;white-space:nowrap}
-.del-btn{background:none;border:none;color:#f87171;font-size:14px;cursor:pointer;padding:2px 6px;opacity:0.6}
-.del-btn:hover{opacity:1}
+.act-btn{background:none;border:none;font-size:13px;cursor:pointer;padding:2px 4px;opacity:0.6;transition:opacity 0.2s}
+.act-btn:hover,.act-btn:active{opacity:1}
 
 .summary-dash{display:flex;justify-content:space-between;background:var(--bg-card);padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid var(--border-color);text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
 .summary-dash>div{flex:1}
@@ -115,12 +110,10 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 
 .insight-item{font-size:13px;margin-bottom:8px;padding:10px 12px;background:var(--bg-input);border-radius:8px;border-right:4px solid var(--accent);line-height:1.4}
 
-/* FAB */
 .fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none;cursor:pointer;transition:transform 0.2s}
 .fab.exp{background:#f97316;box-shadow:0 4px 12px rgba(249,115,22,0.4)}
 .fab:active{transform:scale(0.95)}
 
-/* MODAL */
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
 .modal.open{display:flex}
 .m-box{background:var(--bg-card);width:100%;max-width:400px;border-radius:16px;padding:20px;border:1px solid var(--border-color);box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
@@ -142,7 +135,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .btn-s{background:var(--accent);color:white}
 .btn-s:disabled{opacity:0.7;cursor:wait}
 
-/* NAV */
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 0;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999}
 .nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:3px 8px}
 .nb .ic{font-size:18px}.nb .lb{font-size:8px;font-weight:500}
@@ -187,7 +179,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 
 <div class="ct">
 
-<!-- SUMMARY PAGE -->
 <div id="pgS" class="pg show">
   <div class="kg" id="kpis"></div>
   <div class="sbox" id="sBox"></div>
@@ -197,7 +188,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <div class="upd" id="updTime"></div>
 </div>
 
-<!-- INCOME PAGE -->
 <div id="pgI" class="pg">
   <input class="si" id="iSr" placeholder="🔍 חיפוש הכנסות..." oninput="rInc()">
   <div id="sumI" class="summary-dash"></div>
@@ -207,7 +197,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <button class="fab" onclick="openModal('income')">+</button>
 </div>
 
-<!-- EXPENSE PAGE -->
 <div id="pgE" class="pg">
   <input class="si" id="eSr" placeholder="🔍 חיפוש הוצאות..." oninput="rExp()">
   <div id="sumE" class="summary-dash"></div>
@@ -217,7 +206,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
   <button class="fab exp" onclick="openModal('expense')">+</button>
 </div>
 
-<!-- DATA PAGE -->
 <div id="pgT" class="pg">
   <div class="cd">
     <div class="ttt">💡 תובנות חכמות</div>
@@ -236,7 +224,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 
 </div>
 
-<!-- ADD MODAL -->
+<!-- MODAL -->
 <div class="modal" id="addModal">
   <div class="m-box">
     <div class="m-tl" id="modalTitle">הוספת הכנסה</div>
@@ -269,7 +257,6 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 </div>
 
 <script>
-// ========== FIREBASE ==========
 firebase.initializeApp({
   apiKey:"AIzaSyDX0XDsaB5_JEDH7chBGMVyeUeqPnpwVlE",
   authDomain:"shmoopsiepoo1202.firebaseapp.com",
@@ -281,44 +268,34 @@ firebase.initializeApp({
 });
 const db=firebase.database(),dbRef=db.ref('shmoopsiepoo');
 
-// ========== CONSTANTS ==========
-const USERS={'Amit':'1710','Yael':'1202'};
+const USERS={'Amit':'amit171092','Yael':'yael120294'};
 const IC=['#14b8a6','#f97316','#3b82f6','#a78bfa','#ec4899','#eab308'];
 const EC=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
 const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'];
 
-// ========== STATE ==========
-let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='';
+let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
 let iCt='הכל',eCt='הכל',tT='i',tCt='הכל';
 let D={income:[],expense:[],categories:{income:[],expense:[]}};
 
-// ========== AUTH ==========
+// AUTH
 function doAuth(){
-  const n=document.getElementById('lName').value.trim();
-  const p=document.getElementById('lPass').value.trim();
-  const err=document.getElementById('loginErr');
+  const n=document.getElementById('lName').value.trim(),p=document.getElementById('lPass').value.trim(),err=document.getElementById('loginErr');
   if(!n||!p){err.textContent='הכנס שם וסיסמה';err.style.display='block';return}
-  if(USERS[n]&&USERS[n]===p){
-    currentUser=n;localStorage.setItem('sp_user',n);err.style.display='none';showApp();
-  }else{err.textContent='שם או סיסמה שגויים';err.style.display='block'}
+  if(USERS[n]&&USERS[n]===p){currentUser=n;localStorage.setItem('sp_user',n);err.style.display='none';showApp()}
+  else{err.textContent='שם או סיסמה שגויים';err.style.display='block'}
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doAuth()});
-
-function showApp(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('mainApp').style.display='block';
-  startListening();
-}
+function showApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainApp').style.display='block';startListening()}
 function logout(){localStorage.removeItem('sp_user');dbRef.off();location.reload()}
 
-// ========== THEME ==========
+// THEME
 function toggleTheme(){
   const isL=document.body.getAttribute('data-theme')==='light';
   if(isL){document.body.removeAttribute('data-theme');document.getElementById('themeBtn').textContent='☀️';localStorage.setItem('sp_theme','dark')}
   else{document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙';localStorage.setItem('sp_theme','light')}
 }
 
-// ========== FIREBASE LISTENER ==========
+// FIREBASE
 function startListening(){
   dbRef.on('value',snap=>{
     const v=snap.val()||{};
@@ -335,7 +312,7 @@ function startListening(){
   initDates();
 }
 
-// ========== DATES ==========
+// DATES
 function initDates(){
   const n=new Date(),y=n.getFullYear(),m=n.getMonth();
   const toI=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -355,31 +332,42 @@ function initDates(){
 function sP(el,a,b){document.querySelectorAll('.pb').forEach(x=>x.classList.remove('on'));el.classList.add('on');document.getElementById('sd').value=a;document.getElementById('ed').value=b;applyFilter()}
 function applyFilter(){s1=document.getElementById('sd').value;s2=document.getElementById('ed').value;document.getElementById('pLbl').textContent=new Date(s1).toLocaleDateString('he-IL')+' - '+new Date(s2).toLocaleDateString('he-IL');iCt='הכל';eCt='הכל';tCt='הכל';renderAll()}
 
-// ========== HELPERS ==========
+// HELPERS
 function fmt(n){return'₪'+Math.round(n).toLocaleString('he-IL')}
 function fK(n){return n>=1e6?'₪'+(n/1e6).toFixed(1)+'M':n>=1e3?'₪'+Math.round(n/1000)+'K':'₪'+n}
 function inR(d){return d>=s1&&d<=s2}
 function gF(){return{inc:D.income.filter(r=>inR(r.d)),exp:D.expense.filter(r=>inR(r.d))}}
 function gMC(){return Math.max(1,Math.round((new Date(s2)-new Date(s1))/(30.44*864e5)))}
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
-
 function sumDash(id,arr,cls){
   const t=arr.reduce((s,x)=>s+x.a,0),c=arr.length,a=c>0?t/c:0;
   document.getElementById(id).innerHTML=`<div><div class="sd-ttl">סה״כ</div><div class="sd-val ${cls}">${fmt(t)}</div></div><div style="border-right:1px solid var(--border-color);border-left:1px solid var(--border-color)"><div class="sd-ttl">פעולות</div><div class="sd-val">${c}</div></div><div><div class="sd-ttl">ממוצע</div><div class="sd-val">${fmt(a)}</div></div>`;
 }
 
-// ========== MODAL ==========
-function openModal(type){
-  curType=type;modalCat='';
-  document.getElementById('addModal').classList.add('open');
+// MODAL - NEW + EDIT
+function openModal(type,item){
+  curType=type;editId=null;modalCat='';
   document.getElementById('nDate').value=new Date().toISOString().split('T')[0];
   document.getElementById('nAmt').value='';
   document.getElementById('nDesc').value='';
   document.getElementById('newCatInput').value='';
   document.getElementById('modalTitle').textContent=type==='income'?'הוספת הכנסה':'הוספת הוצאה';
+  document.getElementById('saveBtn').textContent='שמור';
+
+  if(item){
+    editId=item.id;
+    document.getElementById('nDate').value=item.d;
+    document.getElementById('nAmt').value=item.a;
+    document.getElementById('nDesc').value=item.desc;
+    modalCat=item.c||'';
+    document.getElementById('modalTitle').textContent=type==='income'?'עריכת הכנסה':'עריכת הוצאה';
+    document.getElementById('saveBtn').textContent='עדכן';
+  }
+
   renderModalCats();
+  document.getElementById('addModal').classList.add('open');
 }
-function closeModal(){document.getElementById('addModal').classList.remove('open')}
+function closeModal(){document.getElementById('addModal').classList.remove('open');editId=null}
 
 function renderModalCats(){
   const cats=D.categories[curType]||[];
@@ -404,53 +392,55 @@ function saveItem(){
   const desc=document.getElementById('nDesc').value.trim();
   if(!d||!a||a<=0||!desc){alert('מלא תאריך, סכום ותיאור');return}
   if(!modalCat){alert('בחר קטגוריה');return}
-  const id=Date.now().toString();
-  dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
-  if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}});
+
+  if(editId){
+    // UPDATE existing
+    dbRef.child(curType).child(editId).update({d,a,desc,c:modalCat,by:currentUser});
+  }else{
+    // NEW
+    const id=Date.now().toString();
+    dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
+    if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}});
+  }
   closeModal();
 }
 
 function deleteItem(type,id){if(confirm('למחוק?'))dbRef.child(type).child(id).remove()}
 
-// ========== ITEM CARD ==========
-function mkC(r,t){
-  const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',type=t==='i'?'income':'expense';
-  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="del-btn" onclick="deleteItem('${type}','${r.id}')">🗑</button></div></div></div>`;
+function editItem(type,id){
+  const arr=type==='income'?D.income:D.expense;
+  const item=arr.find(r=>r.id===id);
+  if(item)openModal(type,item);
 }
 
-// ========== RENDER ALL ==========
+// ITEM CARD
+function mkC(r,t){
+  const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',type=t==='i'?'income':'expense';
+  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')" title="ערוך">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')" title="מחק">🗑</button></div></div></div>`;
+}
+
+// RENDER ALL
 function renderAll(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
 
-  // KPIs
   document.getElementById('kpis').innerHTML=`
     <div class="kp"><div class="kl">סה״כ הכנסות</div><div class="kv tl">${fK(ti)}</div></div>
     <div class="kp"><div class="kl">סה״כ הוצאות</div><div class="kv or">${fK(te)}</div></div>
     <div class="kp"><div class="kl">רווח לתקופה</div><div class="kv ${pr>=0?'gn':'rd'}">${fK(pr)}</div></div>
     <div class="kp"><div class="kl">ממוצע חודשי</div><div class="kv bl">${fK(ti/gMC())}</div></div>`;
 
-  // Summary box
   const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
   let sb='<div class="sbt">סיכום הכנסות לתקופה</div>';
   Object.entries(icBC).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{sb+=`<div class="sr"><span>${esc(k)}</span><span class="tl">${fmt(v)}</span></div>`});
   sb+=`<div class="sr" style="border-top:2px solid var(--border-color);margin-top:4px;padding-top:4px"><span style="font-weight:700">סה״כ</span><span class="tl" style="font-weight:700;font-size:15px">${fmt(ti)}</span></div>`;
   document.getElementById('sBox').innerHTML=sb;
 
-  // Charts
-  rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);
-
-  // Insights
-  genInsights(inc,exp);
-
-  // Lists
-  rInc();rExp();rTbl();
+  rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);genInsights(inc,exp);rInc();rExp();rTbl();
 }
 
-// ========== CHARTS ==========
 function rBar(inc,exp){
-  const mo={};
-  let st=new Date(s1),en=new Date(s2);
+  const mo={};let st=new Date(s1),en=new Date(s2);
   while(st<=en){const m=st.toISOString().slice(0,7);mo[m]={i:0,e:0};st.setMonth(st.getMonth()+1)}
   inc.forEach(r=>{const m=r.d.slice(0,7);if(mo[m])mo[m].i+=r.a});
   exp.forEach(r=>{const m=r.d.slice(0,7);if(mo[m])mo[m].e+=r.a});
@@ -462,8 +452,7 @@ function rBar(inc,exp){
 }
 
 function rDonut(cats,total){
-  const ar=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
-  let deg=0,grad='';
+  const ar=Object.entries(cats).sort((a,b)=>b[1]-a[1]);let deg=0,grad='';
   ar.forEach((c,i)=>{const p=total>0?c[1]/total*360:0;grad+=`${IC[i%IC.length]} ${deg}deg ${deg+p}deg,`;deg+=p});
   document.getElementById('donut').style.background=ar.length?`conic-gradient(${grad.slice(0,-1)})`:'var(--bg-card)';
   let lg='';ar.forEach((c,i)=>{const p=total>0?(c[1]/total*100).toFixed(1):0;lg+=`<div class="dlg"><div class="ddot" style="background:${IC[i%IC.length]}"></div><div><div style="font-size:10px;font-weight:500">${esc(c[0])}</div><div style="font-size:9px;color:var(--text-muted)">${fmt(c[1])} (${p}%)</div></div></div>`});
@@ -478,10 +467,8 @@ function rExpC(exp,total){
   });document.getElementById('eCats').innerHTML=h||'<div class="empty">אין הוצאות</div>';
 }
 
-// ========== INSIGHTS ==========
 function genInsights(inc,exp){
-  const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0);
-  let ins=[];
+  const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0);let ins=[];
   if(ti>te&&te>0)ins.push(`המצב מעולה! הכנסות גבוהות מהוצאות ב-<b>${fmt(ti-te)}</b>`);
   if(te>ti)ins.push(`שים לב: הוצאות עלו על הכנסות ב-<b>${fmt(te-ti)}</b>`);
   const cats={};exp.forEach(r=>{cats[r.c]=(cats[r.c]||0)+r.a});
@@ -491,31 +478,24 @@ function genInsights(inc,exp){
   document.getElementById('insightsBox').innerHTML=ins.length?ins.map(t=>`<div class="insight-item">${t}</div>`).join(''):'<div class="empty">אין מספיק נתונים</div>';
 }
 
-// ========== INCOME LIST ==========
 function rInc(){
-  const{inc}=gF();
-  const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
+  const{inc}=gF();const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
   document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt='${c}';rInc()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumI',fl,'gn');
-  document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
+  sumDash('sumI',fl,'gn');document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
   document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
 }
 
-// ========== EXPENSE LIST ==========
 function rExp(){
-  const{exp}=gF();
-  const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort()];
+  const{exp}=gF();const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort()];
   document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt='${c}';rExp()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumE',fl,'or');
-  document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
+  sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
   document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
 }
 
-// ========== DATA TABLE ==========
 function setTT(t){tT=t;tCt='הכל';document.getElementById('tI').className='tab '+(t==='i'?'on':'');document.getElementById('tE').className='tab '+(t==='e'?'on':'');rTbl()}
 function rTbl(){
   const{inc,exp}=gF(),recs=tT==='i'?inc:exp;
@@ -523,23 +503,13 @@ function rTbl(){
   document.getElementById('tCh').innerHTML=cats.map(c=>`<button class="fp ${tCt===c?'on':''}" onclick="tCt='${c}';rTbl()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('tSr').value||'').toLowerCase();
   const fl=recs.filter(r=>(tCt==='הכל'||r.c===tCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumT',fl,tT==='i'?'gn':'or');
-  document.getElementById('tCn').textContent=fl.length+' תוצאות';
+  sumDash('sumT',fl,tT==='i'?'gn':'or');document.getElementById('tCn').textContent=fl.length+' תוצאות';
   document.getElementById('tLs').innerHTML=fl.length?fl.map(r=>mkC(r,tT)).join(''):'<div class="empty">אין נתונים</div>';
 }
 
-// ========== NAV ==========
-function go(p){
-  curPg=p;
-  const pages=['S','I','E','T'];
-  pages.forEach((x,i)=>{
-    document.getElementById('pg'+x).className='pg'+(x===p?' show':'');
-    document.getElementById('n'+i).className='nb '+(x===p?'on':'off');
-  });
-  window.scrollTo(0,0);
-}
+function go(p){curPg=p;['S','I','E','T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
 
-// ========== INIT ==========
+// INIT
 (function(){
   if(localStorage.getItem('sp_theme')==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙'}
   const saved=localStorage.getItem('sp_user');
