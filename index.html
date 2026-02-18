@@ -146,7 +146,7 @@ body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system
 .btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:600;font-family:inherit;cursor:pointer;font-size:14px}
 .btn-c{background:var(--bg-input);color:var(--text-main)}
 .btn-s{background:var(--accent);color:white}
-  .cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
+.cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
 .cat-item-name{font-size:13px;font-weight:500;color:var(--text-main);flex:1}
 .cat-item-count{font-size:10px;color:var(--text-muted);margin-left:8px;margin-right:8px}
 .cat-item-acts{display:flex;gap:4px}
@@ -443,7 +443,8 @@ function openModal(type,item){
 function closeModal(){document.getElementById('addModal').classList.remove('open');editId=null}
 function renderModalCats(){
   const cats=D.categories||[];
-  document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" onclick="selCat('${esc(c)}')">${esc(c)}</div>`).join('');
+  // תיקון: שימוש ב-JSON.stringify במקום esc בתוך onclick
+  document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" onclick="selCat(${JSON.stringify(c)})">${esc(c)}</div>`).join('');
 }
 function selCat(c){modalCat=modalCat===c?'':c;renderModalCats()}
 function addNewCat(){
@@ -496,9 +497,10 @@ function saveEditCat(){
 function renderCatPage(){
   const cats=D.categories||[];
   if(!cats.length){document.getElementById('catList').innerHTML='<div class="empty" style="padding:12px">אין קטגוריות. הוסף למטה!</div>';return}
+  // תיקון: שימוש ב-JSON.stringify במקום esc בתוך onclick
   document.getElementById('catList').innerHTML=cats.map(c=>{
     const count=getCatCount(c);
-    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button onclick="openEditCat('${esc(c)}')">✏️</button><button onclick="deleteCat('${esc(c)}')">🗑</button></div></div>`;
+    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button onclick="openEditCat(${JSON.stringify(c)})">✏️</button><button onclick="deleteCat(${JSON.stringify(c)})">🗑</button></div></div>`;
   }).join('');
 }
 
@@ -598,7 +600,8 @@ function genInsights(inc,exp){
 
 function rInc(){
   const{inc}=gF();const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
-  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt='${c}';rInc()">${esc(c)}</button>`).join('');
+  // תיקון: שימוש ב-JSON.stringify במקום esc בתוך onclick
+  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" onclick="iCt=${JSON.stringify(c)};rInc()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumI',fl,'gn');document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
@@ -607,7 +610,8 @@ function rInc(){
 
 function rExp(){
   const{exp}=gF();const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort()];
-  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt='${c}';rExp()">${esc(c)}</button>`).join('');
+  // תיקון: שימוש ב-JSON.stringify במקום esc בתוך onclick
+  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" onclick="eCt=${JSON.stringify(c)};rExp()">${esc(c)}</button>`).join('');
   const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
   sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
