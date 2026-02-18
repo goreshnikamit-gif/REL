@@ -225,7 +225,7 @@ button:hover { background: #059669; }
     <h2>💰 ShmoopsiePoo</h2>
     <input type="text" id="name" placeholder="שם (Amit או Yael)">
     <input type="password" id="pass" placeholder="סיסמה">
-    <button onclick="auth()">התחיל</button>
+    <button onclick="doAuth()">התחיל</button>
   </div>
 </div>
 
@@ -335,9 +335,16 @@ const passwords = {
     'Yael': 'yael120294'
 };
 
-function auth() {
+function doAuth() {
   const name = document.getElementById('name').value.trim();
   const pass = document.getElementById('pass').value.trim();
+  
+  console.log('Trying:', name, pass);
+  
+  if(!name || !pass) {
+    alert('אנא הכנס שם וסיסמה');
+    return;
+  }
   
   if(passwords[name] === pass) {
     user = name;
@@ -346,8 +353,8 @@ function auth() {
     document.getElementById('app').style.display = 'block';
     document.getElementById('userName').textContent = name;
     setToday();
-    load();
-    setInterval(load, 2000);
+    doLoad();
+    setInterval(doLoad, 2000);
   } else {
     alert('שם או סיסמה שגויים');
   }
@@ -378,7 +385,7 @@ function addIncome() {
   if(!d || !a || !desc || !c) { alert('מלא את כל השדות'); return; }
   
   data.income.push({ d, a, desc, c, id: Date.now() });
-  save();
+  doSave();
   document.getElementById('incAmount').value = '';
   document.getElementById('incDesc').value = '';
   document.getElementById('incCat').value = '';
@@ -394,7 +401,7 @@ function addExpense() {
   if(!d || !a || !desc || !c) { alert('מלא את כל השדות'); return; }
   
   data.expense.push({ d, a, desc, c, id: Date.now() });
-  save();
+  doSave();
   document.getElementById('expAmount').value = '';
   document.getElementById('expDesc').value = '';
   document.getElementById('expCat').value = '';
@@ -402,19 +409,20 @@ function addExpense() {
 
 function deleteIncome(id) {
   data.income = data.income.filter(x => x.id !== id);
-  save();
+  doSave();
 }
 
 function deleteExpense(id) {
   data.expense = data.expense.filter(x => x.id !== id);
-  save();
+  doSave();
 }
 
-function save() {
+function doSave() {
   db.ref('shmoopsiepoo').set(data);
+  doLoad();
 }
 
-function load() {
+function doLoad() {
   db.ref('shmoopsiepoo').once('value', (snap) => {
     if(snap.val()) data = snap.val();
     render();
@@ -422,14 +430,14 @@ function load() {
 }
 
 function render() {
-  const ti = data.income.reduce((s, x) => s + x.a, 0);
-  const te = data.expense.reduce((s, x) => s + x.a, 0);
+  const ti = data.income ? data.income.reduce((s, x) => s + x.a, 0) : 0;
+  const te = data.expense ? data.expense.reduce((s, x) => s + x.a, 0) : 0;
   
   document.getElementById('totalIncome').textContent = '₪' + ti.toLocaleString('he-IL');
   document.getElementById('totalExpense').textContent = '₪' + te.toLocaleString('he-IL');
   document.getElementById('balance').textContent = '₪' + (ti - te).toLocaleString('he-IL');
   
-  document.getElementById('incomeList').innerHTML = data.income.map(x => `
+  document.getElementById('incomeList').innerHTML = (data.income || []).map(x => `
     <div class="item">
       <div class="item-left">
         <div class="item-title">${x.desc}</div>
@@ -442,7 +450,7 @@ function render() {
     </div>
   `).join('');
   
-  document.getElementById('expenseList').innerHTML = data.expense.map(x => `
+  document.getElementById('expenseList').innerHTML = (data.expense || []).map(x => `
     <div class="item">
       <div class="item-left">
         <div class="item-title">${x.desc}</div>
@@ -471,8 +479,8 @@ if(localStorage.getItem('user')) {
   document.getElementById('app').style.display = 'block';
   document.getElementById('userName').textContent = user;
   setToday();
-  load();
-  setInterval(load, 2000);
+  doLoad();
+  setInterval(doLoad, 2000);
 }
 </script>
 
