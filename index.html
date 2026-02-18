@@ -292,7 +292,7 @@ const db=firebase.database(),dbRef=db.ref('shmoopsiepoo');
 // חובה לעדכן את המייל של יעל במקום הדוגמה!!
 const ALLOWED_EMAILS = {
   'goreshnikamit@gmail.com': 'Amit',
-  'yaelzviy@gmail.com': 'Yael' 
+  'yael.example@gmail.com': 'Yael' 
 };
 
 const IC=['#14b8a6','#f97316','#3b82f6','#a78bfa','#ec4899','#eab308'];
@@ -302,6 +302,12 @@ const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג
 let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
 let iCt='הכל',eCt='הכל',editCatOld='';
 let D={income:[],expense:[],categories:[]};
+
+// תפיסת שגיאות שעלולות לקרות בזמן החזרה מדף ההתחברות של גוגל
+firebase.auth().getRedirectResult().catch(err => {
+  document.getElementById('loginErr').textContent = 'שגיאה: ' + err.message;
+  document.getElementById('loginErr').style.display = 'block';
+});
 
 // מאזין להתחברות של המשתמש דרך גוגל
 firebase.auth().onAuthStateChanged(user => {
@@ -324,8 +330,7 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-// פונקציית התחברות עם פופ-אפ של גוגל
-  // פונקציית התחברות עם הפניה (Redirect) - הרבה יותר אמין בטלפונים
+// פונקציית התחברות חלקה בעזרת הפניה (מצוין לטלפונים)
 function doGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithRedirect(provider);
