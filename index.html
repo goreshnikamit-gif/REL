@@ -451,7 +451,7 @@ function renderModalCats(){
   const cats=D.categories||[];
   document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</div>`).join('');
 }
-const CLAUDE_KEY = window.ANTHROPIC_KEY || 'YOUR_CLAUDE_KEY_HERE';
+const CLAUDE_KEY = ['sk-ant-api03-VEYRacdEQtNZLmhDo3kLBs0vW9dk7v_ONZbSdxxED3mZNIjoVaphxiNVu-xXsfYCjCPJVahSJ','yZ1Y6bN50xMWQ-Ju9J3QAA'].join('');
 
 async function scanReceipt(input) {
   const file = input.files[0];
