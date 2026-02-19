@@ -1,276 +1,308 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl" class="dark">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>ShmoopsiePoo - Finance Tracker</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'] },
-        colors: {
-          gray: { 50: '#fafafa', 100: '#f4f4f5', 200: '#e4e4e7', 300: '#d4d4d8', 400: '#a1a1aa', 500: '#71717a', 600: '#52525b', 700: '#3f3f46', 800: '#27272a', 900: '#18181b', 950: '#09090b' },
-          primary: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81' },
-          success: { 500: '#10b981', 600: '#059669' },
-          danger: { 500: '#f43f5e', 600: '#e11d48' },
-        }
-      }
-    }
-  }
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ShmoopsiePoo - Yael & Amit</title>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
-  ::-webkit-scrollbar{display:none}
-  .no-tap{-webkit-tap-highlight-color:transparent}
-  body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-  @keyframes stickerPop {
-    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
-    15% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-    85% { transform: scale(1.1) rotate(0deg); opacity: 1; }
-    100% { transform: scale(0) rotate(20deg); opacity: 0; }
-  }
-  .sticker-anim { animation: stickerPop 2.0s ease-out forwards; }
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-body:#0f172a;--bg-card:#1e293b;--bg-input:rgba(255,255,255,0.05);--border-color:rgba(255,255,255,0.1);
+  --text-main:#f1f5f9;--text-sub:#94a3b8;--text-muted:#64748b;--accent:#14b8a6;
+  --shadow:0 10px 25px rgba(0,0,0,0.5);--modal-bg:rgba(15,23,42,0.9);--nav-bg:rgba(15,23,42,0.95);
+}
+[data-theme="light"]{
+  --bg-body:#f1f5f9;--bg-card:#ffffff;--bg-input:#e2e8f0;--border-color:#cbd5e1;
+  --text-main:#0f172a;--text-sub:#475569;--text-muted:#94a3b8;--accent:#0d9488;
+  --shadow:0 4px 15px rgba(0,0,0,0.1);--modal-bg:rgba(241,245,249,0.9);--nav-bg:rgba(255,255,255,0.95);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg-body);color:var(--text-main);font-family:'Rubik',system-ui,sans-serif;direction:rtl;min-height:100vh;overflow-x:hidden;padding-bottom:90px;transition:background 0.3s,color 0.3s}
+::-webkit-scrollbar{display:none}
+
+/* שכבת המדבקה המנצחת - הגדרות בלתי משתנות */
+#stickerOverlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  display: none; align-items: center; justify-content: center;
+  z-index: 200000; pointer-events: none;
+}
+.sticker-img {
+  width: 250px; height: 250px;
+  animation: stickerPop 2.0s ease-out forwards;
+}
+@keyframes stickerPop {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  15% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+  85% { transform: scale(1.1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0) rotate(20deg); opacity: 0; }
+}
+
+#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg-body);z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.l-box{background:var(--bg-card);padding:40px 30px;border-radius:24px;width:100%;max-width:340px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border-color)}
+.l-ttl{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#14b8a6,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.l-sub{font-size:14px;color:var(--text-sub);margin-bottom:24px}
+.l-btn{width:100%;padding:14px;background:white;color:#333;border:none;border-radius:10px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:background 0.2s}
+.l-btn:hover{background:#f8f9fa}
+.l-err{color:#f87171;font-size:12px;margin-bottom:12px;display:none;line-height:1.4}
+
+.hdr{background:linear-gradient(135deg,#134e4a,#0d9488,#134e4a);padding:16px;padding-top:calc(16px + env(safe-area-inset-top));position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(13,148,136,0.3)}
+.hdr-r{display:flex;align-items:center;justify-content:space-between}
+.lg{font-size:18px;font-weight:800;color:#fff}
+.lg-s{font-size:10px;color:rgba(255,255,255,0.8)}
+.ref-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:14px;font-family:inherit;cursor:pointer;margin-right:5px}
+.plb{color:rgba(255,255,255,0.9);font-size:11px;font-weight:500}
+
+.dba{background:var(--bg-card);padding:12px 14px;border-bottom:1px solid var(--border-color);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dba label{font-size:11px;color:var(--text-sub);font-weight:500}
+.di{border:1px solid var(--border-color);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;color:var(--text-main);background:var(--bg-input);flex:1;min-width:100px;text-align:center}
+.abtn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+.prw{display:flex;gap:5px;width:100%;margin-top:4px;overflow-x:auto;padding-bottom:2px}
+.pb{padding:4px 9px;border-radius:14px;border:1px solid var(--border-color);font-size:10px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub);white-space:nowrap}
+.pb.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.ct{padding:12px}
+.kg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.kp{background:var(--bg-input);border-radius:12px;padding:12px 14px;flex:1 1 45%;min-width:135px;border:1px solid var(--border-color)}
+.kl{font-size:10px;color:var(--text-sub);margin-bottom:2px;font-weight:500}
+.kv{font-size:20px;font-weight:700;letter-spacing:-0.02em}
+.tl{color:var(--accent)}.or{color:#f97316}.bl{color:#3b82f6}.rd{color:#f87171}.gn{color:#34d399}
+
+.cd{background:var(--bg-card);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--border-color)}
+.ttt{font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-main)}
+
+.sbox{background:linear-gradient(135deg,rgba(13,148,136,0.1),rgba(16,185,129,0.08));border:1px solid rgba(13,148,136,0.3);border-radius:12px;padding:14px;margin-bottom:12px}
+.sbt{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.sr{display:flex;justify-content:space-between;padding:3px 0;font-size:12px}
+
+.bars{display:flex;align-items:flex-end;gap:3px;height:160px;padding:0 4px;border-bottom:1px solid var(--border-color)}
+.bar-g{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;height:100%;justify-content:flex-end;min-width:0}
+.bar{border-radius:2px 2px 0 0;min-height:1px;width:100%;max-width:14px}
+.bar-l{font-size:7px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+
+.donut{width:140px;height:140px;border-radius:50%;position:relative}
+.donut::after{content:'';position:absolute;top:25%;left:25%;width:50%;height:50%;border-radius:50%;background:var(--bg-card)}
+.donut-w{display:flex;align-items:center;gap:10px}
+.dlg{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.ddot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+.cr{margin-bottom:8px}
+.crh{display:flex;justify-content:space-between;margin-bottom:2px}
+.crn{font-size:11px;font-weight:500;color:var(--text-main)}
+.crv{font-size:11px;font-weight:600}
+.crt{height:4px;background:var(--bg-input);border-radius:2px;overflow:hidden}
+.crf{height:100%;border-radius:2px}
+.crs{font-size:9px;color:var(--text-muted);display:flex;justify-content:space-between;margin-top:1px}
+
+.dc{background:var(--bg-card);border-radius:10px;padding:9px 11px;margin-bottom:5px;border:1px solid var(--border-color)}
+.dr{display:flex;justify-content:space-between;align-items:flex-start}
+.dtt{font-size:11px;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm{font-size:9px;color:var(--text-muted);margin-top:2px;display:flex;gap:5px;align-items:center}
+.dbg{padding:1px 6px;border-radius:10px;font-size:8px;font-weight:500;color:#fff}
+.da{font-size:13px;font-weight:700;margin-right:8px;white-space:nowrap}
+.act-btn{background:none;border:none;font-size:13px;cursor:pointer;padding:2px 4px;opacity:0.6;transition:opacity 0.2s}
+.act-btn:hover,.act-btn:active{opacity:1}
+
+.summary-dash{display:flex;justify-content:space-between;background:var(--bg-card);padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid var(--border-color);text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.summary-dash>div{flex:1}
+.sd-ttl{font-size:11px;color:var(--text-sub);margin-bottom:4px;font-weight:500}
+.sd-val{font-size:16px;font-weight:800;color:var(--text-main)}
+
+.si{width:100%;padding:9px 12px;border-radius:9px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-main);font-size:12px;font-family:inherit;outline:none;margin-bottom:6px}
+.fr{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.fp{padding:3px 8px;border-radius:14px;border:1px solid var(--border-color);font-size:9px;font-family:inherit;cursor:pointer;background:var(--bg-input);color:var(--text-sub)}
+.fp.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cn{font-size:10px;color:var(--text-muted);margin-bottom:6px}
+
+.insight-item{font-size:13px;margin-bottom:8px;padding:10px 12px;background:var(--bg-input);border-radius:8px;border-right:4px solid var(--accent);line-height:1.4}
+
+.fab{position:fixed;bottom:90px;left:20px;width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:30px;box-shadow:0 4px 12px rgba(20,184,166,0.4);z-index:1000;border:none;cursor:pointer;transition:transform 0.2s}
+.fab.exp{background:#f97316;box-shadow:0 4px 12px rgba(249,115,22,0.4)}
+.fab.wa{background:#25D366;box-shadow:0 4px 12px rgba(37,211,102,0.4);font-size:26px}
+.fab:active{transform:scale(0.95)}
+
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.modal.open{display:flex}
+.m-box{background:var(--bg-card);width:100%;max-width:400px;border-radius:16px;padding:20px;border:1px solid var(--border-color);box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
+.m-tl{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-main);text-align:center}
+.inp-g{margin-bottom:12px}
+.inp-l{display:block;font-size:11px;color:var(--text-sub);margin-bottom:4px}
+.inp{width:100%;padding:10px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;font-size:14px;outline:none}
+.inp:focus{border-color:var(--accent)}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.cat-chip{padding:6px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:16px;font-size:12px;color:var(--text-sub);cursor:pointer;transition:all 0.2s;font-family:inherit}
+.cat-chip:hover{border-color:var(--accent);color:var(--text-main)}
+.cat-chip.on{background:var(--accent);border-color:var(--accent);color:white}
+.add-cat-row{display:flex;gap:6px;margin-top:6px}
+.add-cat-row input{flex:1;padding:6px 10px;font-size:12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;outline:none}
+.add-cat-row button{padding:6px 12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.m-acts{display:flex;gap:10px;margin-top:20px}
+.btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:600;font-family:inherit;cursor:pointer;font-size:14px}
+.btn-c{background:var(--bg-input);color:var(--text-main)}
+.btn-s{background:var(--accent);color:white}
+.cat-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:10px;margin-bottom:6px}
+.cat-item-name{font-size:13px;font-weight:500;color:var(--text-main);flex:1}
+.cat-item-count{font-size:10px;color:var(--text-muted);margin-left:8px;margin-right:8px}
+.cat-item-acts{display:flex;gap:4px}
+.cat-item-acts button{background:none;border:none;font-size:14px;cursor:pointer;opacity:0.6;padding:2px 4px}
+.cat-item-acts button:hover,.cat-item-acts button:active{opacity:1}
+.cat-add-row{display:flex;gap:8px;margin-top:10px}
+.cat-add-row input{flex:1;padding:8px 12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-main);font-family:inherit;font-size:13px;outline:none}
+.cat-add-row input:focus{border-color:var(--accent)}
+.cat-add-row button{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+
+.edit-cat-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--modal-bg);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.edit-cat-modal.open{display:flex}
+
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(20px);border-top:1px solid var(--border-color);display:flex;justify-content:space-around;padding:8px 0;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:9999}
+.nb{background:none;border:none;display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:3px 8px}
+.nb .ic{font-size:18px}.nb .lb{font-size:8px;font-weight:500}
+.nb.on{color:var(--accent)}.nb.off{color:var(--text-muted)}
+
+.pg{display:none}.pg.show{display:block}
+.upd{font-size:9px;color:var(--text-muted);text-align:center;padding:8px}
+.empty{text-align:center;padding:30px;color:var(--text-muted);font-size:12px}
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 font-sans transition-colors duration-300 pb-24 selection:bg-primary-500 selection:text-white">
+<body>
 
-<!-- Sticker Overlay -->
-<div id="stickerOverlay" class="fixed inset-0 z-[100] hidden items-center justify-center pointer-events-none">
-  <img src="סטיקר.58" class="w-64 h-64 sticker-anim drop-shadow-2xl" onerror="this.src='https://cdn-icons-png.flaticon.com/512/7486/7486747.png'">
+<div id="stickerOverlay">
+  <img src="סטיקר.58" class="sticker-img" onerror="this.src='https://i.postimg.cc/85zK09kC/image.png'">
 </div>
 
-<!-- Login Screen -->
-<div id="loginScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-950 p-6">
-  <div class="w-full max-w-sm bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-200 dark:border-gray-800 text-center">
-    <div class="w-16 h-16 bg-primary-50 dark:bg-primary-900/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl">💰</div>
-    <h1 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">ShmoopsiePoo</h1>
-    <p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">Financial Intelligence for Yael & Amit</p>
-    <div id="loginErr" class="hidden mb-4 p-3 bg-danger-50 text-danger-600 border border-danger-100 rounded-lg text-xs"></div>
-    <button onclick="doGoogleLogin()" class="w-full py-3 px-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center justify-center gap-3 active:scale-[0.98]">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      Continue with Google
+<div id="loginScreen">
+  <div class="l-box">
+    <div class="l-ttl">💰 ShmoopsiePoo</div>
+    <div class="l-sub">Yael & Amit</div>
+    <div class="l-err" id="loginErr"></div>
+    <button class="l-btn" onclick="doGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg>
+      התחבר עם חשבון גוגל
     </button>
   </div>
 </div>
 
 <div id="mainApp" style="display:none">
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 w-full bg-white/90 dark:bg-gray-950/90 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
-    <div class="flex items-center justify-between px-4 py-3 pt-safe-top">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-sm">💰</div>
-        <div>
-          <h1 class="text-sm font-bold text-gray-900 dark:text-white leading-none">ShmoopsiePoo</h1>
-          <p class="text-[10px] text-gray-500 uppercase tracking-wider font-medium mt-0.5">Yael & Amit</p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="toggleTheme()" id="themeBtn" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition">🌙</button>
-        <button onclick="firebase.auth().signOut()" class="p-2 rounded-lg text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition">🚪</button>
-      </div>
-    </div>
-    <div id="pLbl" class="px-4 pb-2 text-[10px] font-mono text-gray-400 text-right tracking-tight"></div>
-  </header>
-
-  <!-- Filter Bar -->
-  <div class="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-4 py-3 space-y-3">
-    <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-900 p-1 rounded-lg border border-gray-200 dark:border-gray-800">
-      <input type="date" id="sd" class="flex-1 min-w-0 bg-transparent text-gray-600 dark:text-gray-300 text-xs py-1.5 px-2 font-mono outline-none">
-      <span class="text-gray-300">→</span>
-      <input type="date" id="ed" class="flex-1 min-w-0 bg-transparent text-gray-600 dark:text-gray-300 text-xs py-1.5 px-2 font-mono outline-none">
-      <button onclick="applyFilter()" class="bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold py-1.5 px-3 rounded-md transition shadow-sm">Filter</button>
-    </div>
-    <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" id="presets">
-      <!-- Presets injected via JS -->
+<div class="hdr">
+  <div class="hdr-r">
+    <div><div class="lg">💰 ShmoopsiePoo</div><div class="lg-s">Yael & Amit</div></div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <button class="ref-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+      <button class="ref-btn" onclick="firebase.auth().signOut()" title="התנתק">🚪</button>
+      <div class="plb" id="pLbl"></div>
     </div>
   </div>
+</div>
 
-  <!-- Content Area -->
-  <main class="p-4 space-y-5 max-w-2xl mx-auto">
+<div class="dba">
+  <label>מ:</label><input type="date" class="di" id="sd">
+  <label>עד:</label><input type="date" class="di" id="ed">
+  <button class="abtn" onclick="applyFilter()">סנן</button>
+  <div class="prw" id="presets"></div>
+</div>
 
-    <!-- Page: Summary -->
-    <div id="pgS" class="pg hidden">
-      <div id="kpis" class="grid grid-cols-2 gap-3 mb-5"></div>
-      
-      <div id="sBox" class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm mb-5"></div>
-      
-      <div class="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800 mb-5">
-        <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Cash Flow Analysis</h3>
-        <div id="mChart" class="flex items-end justify-between gap-2 h-40 pt-4 border-b border-gray-100 dark:border-gray-800"></div>
-      </div>
+<div class="ct">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-        <div class="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Income Sources</h3>
-          <div class="flex items-center gap-6">
-            <div id="donut" class="w-28 h-28 rounded-full relative shrink-0"></div>
-            <div id="piLg" class="flex-1 space-y-1.5"></div>
-          </div>
-        </div>
+<div id="pgS" class="pg show">
+  <div class="kg" id="kpis"></div>
+  <div class="sbox" id="sBox"></div>
+  <div class="cd"><div class="ttt">הכנסות vs הוצאות חודשי</div><div id="mChart" class="bars"></div></div>
+  <div class="cd"><div class="ttt">פילוח הכנסות לפי קטגוריה</div><div class="donut-w"><div class="donut" id="donut"></div><div id="piLg" style="flex:1"></div></div></div>
+  <div class="cd"><div class="ttt">טופ הוצאות לפי קטגוריה</div><div id="eCats"></div></div>
+  <div class="upd" id="updTime"></div>
+  <button class="fab wa" onclick="shareWhatsApp()">📲</button>
+</div>
 
-        <div class="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Top Spending</h3>
-          <div id="eCats" class="space-y-3"></div>
-        </div>
-      </div>
+<div id="pgI" class="pg">
+  <input class="si" id="iSr" placeholder="🔍 חיפוש הכנסות..." oninput="rInc()">
+  <div id="sumI" class="summary-dash"></div>
+  <div class="fr" id="iCh"></div>
+  <div class="cn" id="iCn"></div>
+  <div id="iLs"></div>
+  <button class="fab" onclick="openModal('income')">+</button>
+</div>
 
-      <div id="updTime" class="text-[10px] text-center text-gray-400 font-medium py-2"></div>
-      
-      <button onclick="shareWhatsApp()" class="fixed bottom-24 right-5 w-12 h-12 bg-[#25D366] text-white rounded-full shadow-lg shadow-green-500/20 flex items-center justify-center text-xl transition transform active:scale-95 z-30 ring-2 ring-white dark:ring-gray-900">
-        📲
-      </button>
+<div id="pgE" class="pg">
+  <input class="si" id="eSr" placeholder="🔍 חיפוש הוצאות..." oninput="rExp()">
+  <div id="sumE" class="summary-dash"></div>
+  <div class="fr" id="eCh"></div>
+  <div class="cn" id="eCn"></div>
+  <div id="eLs"></div>
+  <button class="fab exp" onclick="openModal('expense')">💸</button>
+</div>
+
+<div id="pgT" class="pg">
+  <div class="cd">
+    <div class="ttt">💡 תובנות חכמות וניתוח חיסכון</div>
+    <div id="insightsBox"></div>
+  </div>
+  <div class="cd">
+    <div class="ttt">🏷️ קטגוריות</div>
+    <div id="catList"></div>
+    <div class="cat-add-row">
+      <input type="text" id="newCatPageInput" placeholder="שם קטגוריה חדשה...">
+      <button onclick="addCatFromPage()">+ הוסף</button>
     </div>
+    <div style="margin-top:10px"><button onclick="deleteAllCats()" style="width:100%;padding:10px;background:#ef4444;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ מחק את כל הקטגוריות</button></div>
+  </div>
+</div>
 
-    <!-- Page: Income -->
-    <div id="pgI" class="pg hidden">
-      <div class="sticky top-[138px] z-30 bg-gray-50 dark:bg-gray-950 pb-3">
-        <div class="relative">
-            <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
-            <input id="iSr" placeholder="Search income records..." oninput="rInc()" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm rounded-xl pl-10 pr-4 py-2.5 shadow-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none transition-all">
-        </div>
-      </div>
-      <div id="sumI" class="flex justify-between bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-center mb-4 divide-x divide-x-reverse divide-gray-100 dark:divide-gray-800"></div>
-      <div class="flex flex-wrap gap-2 mb-4" id="iCh"></div>
-      <div class="text-[10px] text-gray-400 mb-2 font-mono uppercase tracking-wide" id="iCn"></div>
-      <div id="iLs" class="space-y-2"></div>
-      <button onclick="openModal('income')" class="fixed bottom-24 left-5 w-12 h-12 bg-primary-600 text-white rounded-full shadow-lg shadow-primary-500/30 flex items-center justify-center text-2xl transition transform active:scale-95 z-30 ring-2 ring-white dark:ring-gray-900">+</button>
+</div>
+
+<div class="modal" id="addModal">
+  <div class="m-box">
+    <div class="m-tl" id="modalTitle">הוספת הכנסה</div>
+    <div style="margin-bottom:14px">
+      <input type="file" id="receiptFile" accept="image/*" style="display:none" onchange="scanReceipt(this)">
+      <button onclick="document.getElementById('receiptFile').click()" id="scanBtn" style="width:100%;padding:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">📷 סרוק קבלה / חשבונית אוטומטית</button>
+      <div id="scanStatus" style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:4px;display:none"></div>
     </div>
-
-    <!-- Page: Expense -->
-    <div id="pgE" class="pg hidden">
-      <div class="sticky top-[138px] z-30 bg-gray-50 dark:bg-gray-950 pb-3">
-         <div class="relative">
-            <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
-            <input id="eSr" placeholder="Search expense records..." oninput="rExp()" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm rounded-xl pl-10 pr-4 py-2.5 shadow-sm focus:ring-2 focus:ring-danger-500/20 focus:border-danger-500 focus:outline-none transition-all">
-        </div>
-      </div>
-      <div id="sumE" class="flex justify-between bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm text-center mb-4 divide-x divide-x-reverse divide-gray-100 dark:divide-gray-800"></div>
-      <div class="flex flex-wrap gap-2 mb-4" id="eCh"></div>
-      <div class="text-[10px] text-gray-400 mb-2 font-mono uppercase tracking-wide" id="eCn"></div>
-      <div id="eLs" class="space-y-2"></div>
-      <button onclick="openModal('expense')" class="fixed bottom-24 left-5 w-12 h-12 bg-danger-600 text-white rounded-full shadow-lg shadow-danger-500/30 flex items-center justify-center text-xl transition transform active:scale-95 z-30 ring-2 ring-white dark:ring-gray-900">💸</button>
-    </div>
-
-    <!-- Page: Tools/Categories -->
-    <div id="pgT" class="pg hidden">
-      <div class="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800 mb-5">
-        <h3 class="text-xs font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
-           <span class="text-lg">💡</span> Smart Insights
-        </h3>
-        <div id="insightsBox" class="space-y-3"></div>
-      </div>
-      
-      <div class="bg-white dark:bg-gray-900 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-800">
-        <h3 class="text-xs font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wide">
-            <span class="text-lg">🏷️</span> Manage Categories
-        </h3>
-        <div id="catList" class="space-y-2 mb-4"></div>
-        <div class="flex gap-2 mb-6">
-          <input type="text" id="newCatPageInput" placeholder="Create new category..." class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 outline-none transition-all">
-          <button onclick="addCatFromPage()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm">Add</button>
-        </div>
-        <button onclick="deleteAllCats()" class="w-full py-3 bg-danger-50 dark:bg-danger-900/10 text-danger-600 dark:text-danger-400 rounded-xl text-sm font-bold border border-danger-100 dark:border-danger-900 transition hover:bg-danger-100">🗑️ Reset All Categories</button>
+    <div class="inp-g"><label class="inp-l">תאריך</label><input type="date" class="inp" id="nDate"></div>
+    <div class="inp-g"><label class="inp-l">סכום</label><input type="number" class="inp" id="nAmt" placeholder="0" inputmode="numeric"></div>
+    <div class="inp-g"><label class="inp-l">תיאור</label><input type="text" class="inp" id="nDesc" placeholder="מה זה?"></div>
+    <div class="inp-g">
+      <label class="inp-l">קטגוריה</label>
+      <div class="cat-chips" id="modalCats"></div>
+      <div class="add-cat-row" style="margin-top:8px">
+        <input type="text" id="newCatInput" placeholder="קטגוריה חדשה...">
+        <button onclick="addNewCat()">+</button>
       </div>
     </div>
-
-  </main>
-
-  <!-- Transaction Modal -->
-  <div id="addModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
-    <div class="bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900">
-        <h3 class="text-base font-bold text-center text-gray-900 dark:text-white" id="modalTitle">Add Item</h3>
-      </div>
-      
-      <div class="p-6 overflow-y-auto space-y-5">
-        <!-- Scan Button -->
-        <div>
-          <input type="file" id="receiptFile" accept="image/*" class="hidden" onchange="scanReceipt(this)">
-          <button onclick="document.getElementById('receiptFile').click()" id="scanBtn" class="w-full py-3 bg-gradient-to-r from-primary-600 to-indigo-600 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 group">
-            <span class="group-hover:scale-110 transition-transform">📷</span> AI Receipt Scan
-          </button>
-          <div id="scanStatus" class="text-xs text-center mt-2 hidden"></div>
-        </div>
-
-        <!-- Inputs -->
-        <div class="space-y-4">
-            <div>
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Date</label>
-                <input type="date" id="nDate" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white">
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Amount</label>
-                <input type="number" id="nAmt" placeholder="0.00" inputmode="numeric" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-xl font-mono font-medium outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white">
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Description</label>
-                <input type="text" id="nDesc" placeholder="What is it?" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white">
-            </div>
-        </div>
-        
-        <div>
-          <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Category</label>
-          <div class="flex flex-wrap gap-2 mb-3 max-h-32 overflow-y-auto p-1" id="modalCats"></div>
-          <div class="flex gap-2">
-            <input type="text" id="newCatInput" placeholder="New category..." class="flex-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary-500">
-            <button onclick="addNewCat()" class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-lg font-bold text-xs hover:bg-gray-300 dark:hover:bg-gray-600 transition">Add</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="p-5 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 flex gap-3">
-        <button onclick="closeModal()" class="flex-1 py-2.5 rounded-lg font-bold text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition">Cancel</button>
-        <button id="saveBtn" onclick="saveItem()" class="flex-1 py-2.5 rounded-lg font-bold text-sm bg-primary-600 text-white shadow-md shadow-primary-500/20 hover:bg-primary-700 transition">Save Item</button>
-      </div>
+    <div class="m-acts">
+      <button class="btn btn-c" onclick="closeModal()">ביטול</button>
+      <button class="btn btn-s" id="saveBtn" onclick="saveItem()">שמור</button>
     </div>
   </div>
+</div>
 
-  <!-- Edit Category Modal -->
-  <div id="editCatModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
-    <div class="bg-white dark:bg-gray-800 w-full max-w-xs rounded-2xl p-6 shadow-2xl border border-gray-200 dark:border-gray-700">
-      <h3 class="text-base font-bold text-center mb-4 text-gray-900 dark:text-white">Rename Category</h3>
-      <input type="text" id="editCatName" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2.5 text-sm mb-4 outline-none focus:ring-2 focus:ring-primary-500">
-      <div class="flex gap-3">
-        <button onclick="closeEditCat()" class="flex-1 py-2 rounded-lg text-sm font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">Cancel</button>
-        <button onclick="saveEditCat()" class="flex-1 py-2 rounded-lg text-sm font-bold bg-primary-600 text-white">Update</button>
-      </div>
+<div class="edit-cat-modal" id="editCatModal">
+  <div class="m-box">
+    <div class="m-tl">עריכת קטגוריה</div>
+    <div class="inp-g"><label class="inp-l">שם חדש</label><input type="text" class="inp" id="editCatName"></div>
+    <div class="m-acts">
+      <button class="btn btn-c" onclick="closeEditCat()">ביטול</button>
+      <button class="btn btn-s" onclick="saveEditCat()">עדכן</button>
     </div>
   </div>
+</div>
 
-  <!-- Bottom Navigation -->
-  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-950/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 pb-safe-bottom">
-    <div class="flex justify-around items-center h-16">
-      <button id="n0" onclick="go('S')" class="flex flex-col items-center justify-center w-full h-full transition-all text-primary-600 dark:text-primary-400">
-        <span class="text-xl mb-1">📊</span>
-        <span class="text-[10px] font-bold tracking-wide">Overview</span>
-      </button>
-      <button id="n1" onclick="go('I')" class="flex flex-col items-center justify-center w-full h-full transition-all text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-        <span class="text-xl mb-1">💰</span>
-        <span class="text-[10px] font-bold tracking-wide">Income</span>
-      </button>
-      <button id="n2" onclick="go('E')" class="flex flex-col items-center justify-center w-full h-full transition-all text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-        <span class="text-xl mb-1">💸</span>
-        <span class="text-[10px] font-bold tracking-wide">Expense</span>
-      </button>
-      <button id="n3" onclick="go('T')" class="flex flex-col items-center justify-center w-full h-full transition-all text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-        <span class="text-xl mb-1">⚙️</span>
-        <span class="text-[10px] font-bold tracking-wide">Manage</span>
-      </button>
-    </div>
-  </nav>
+<div class="nav">
+  <button class="nb on" id="n0" onclick="go('S')"><span class="ic">📊</span><span class="lb">סיכום</span></button>
+  <button class="nb off" id="n1" onclick="go('I')"><span class="ic">💰</span><span class="lb">הכנסות</span></button>
+  <button class="nb off" id="n2" onclick="go('E')"><span class="ic">💸</span><span class="lb">הוצאות</span></button>
+  <button class="nb off" id="n3" onclick="go('T')"><span class="ic">⚙️</span><span class="lb">קטגוריות</span></button>
+</div>
 
 </div>
 
 <script>
-/* Firebase Config */
 firebase.initializeApp({
   apiKey:"AIzaSyDX0XDsaB5_JEDH7chBGMVyeUeqPnpwVlE",
   authDomain:"shmoopsiepoo1202.firebaseapp.com",
@@ -281,21 +313,15 @@ firebase.initializeApp({
   appId:"1:589285900622:web:1ac7d9b5181266f20b1e1f"
 });
 const db=firebase.database(),dbRef=db.ref('shmoopsiepoo');
-const ALLOWED_EMAILS = { 'goreshnikamit@gmail.com': 'Amit', 'yaelzviy@gmail.com': 'Yael' };
 
-/* Theme Init */
-if (localStorage.getItem('sp_theme') === 'light') {
-  document.documentElement.classList.remove('dark');
-  document.getElementById('themeBtn').textContent = '🌙';
-} else {
-  document.documentElement.classList.add('dark');
-  document.getElementById('themeBtn').textContent = '☀️';
-}
+const ALLOWED_EMAILS = {
+  'goreshnikamit@gmail.com': 'Amit',
+  'yaelzviy@gmail.com': 'Yael' 
+};
 
-// Modern SaaS palette constants
-const IC=['#6366f1','#8b5cf6','#ec4899','#f43f5e','#f59e0b','#10b981']; // Indigo, Violet, Pink, Rose, Amber, Emerald
-const EC=['#f43f5e','#f97316','#f59e0b','#84cc16','#10b981','#06b6d4','#3b82f6','#6366f1'];
-const MH=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const IC=['#14b8a6','#f97316','#3b82f6','#a78bfa','#ec4899','#eab308'];
+const EC=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
+const MH=['ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'];
 
 let currentUser='',s1='',s2='',curPg='S',curType='income',modalCat='',editId=null;
 let iCt='הכל',eCt='הכל',editCatOld='';
@@ -308,8 +334,8 @@ function showSticker() {
 }
 
 firebase.auth().getRedirectResult().catch(err => {
-  document.getElementById('loginErr').textContent = 'Error: ' + err.message;
-  document.getElementById('loginErr').classList.remove('hidden');
+  document.getElementById('loginErr').textContent = 'שגיאה: ' + err.message;
+  document.getElementById('loginErr').style.display = 'block';
 });
 
 firebase.auth().onAuthStateChanged(user => {
@@ -317,16 +343,17 @@ firebase.auth().onAuthStateChanged(user => {
     const email = user.email.toLowerCase();
     if (ALLOWED_EMAILS[email]) {
       currentUser = ALLOWED_EMAILS[email];
-      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
+      document.getElementById('loginErr').style.display = 'none';
       startListening();
     } else {
-      document.getElementById('loginErr').textContent = 'Email ' + email + ' is not authorized.';
-      document.getElementById('loginErr').classList.remove('hidden');
+      document.getElementById('loginErr').textContent = 'מצטערים, המייל ' + email + ' אינו מורשה לגשת למערכת.';
+      document.getElementById('loginErr').style.display = 'block';
       firebase.auth().signOut();
     }
   } else {
-    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('mainApp').style.display = 'none';
   }
 });
@@ -334,22 +361,19 @@ firebase.auth().onAuthStateChanged(user => {
 function doGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider).catch(err => {
-    if (err.code === 'auth/popup-blocked') firebase.auth().signInWithRedirect(provider);
-    else { document.getElementById('loginErr').textContent = err.message; document.getElementById('loginErr').classList.remove('hidden'); }
+    if (err.code === 'auth/popup-blocked') {
+      firebase.auth().signInWithRedirect(provider);
+    } else {
+      document.getElementById('loginErr').textContent = 'שגיאה: ' + err.message;
+      document.getElementById('loginErr').style.display = 'block';
+    }
   });
 }
 
 function toggleTheme(){
-  const html = document.documentElement;
-  if(html.classList.contains('dark')){
-    html.classList.remove('dark');
-    document.getElementById('themeBtn').textContent='🌙';
-    localStorage.setItem('sp_theme','light');
-  } else {
-    html.classList.add('dark');
-    document.getElementById('themeBtn').textContent='☀️';
-    localStorage.setItem('sp_theme','dark');
-  }
+  const isL=document.body.getAttribute('data-theme')==='light';
+  if(isL){document.body.removeAttribute('data-theme');document.getElementById('themeBtn').textContent='☀️';localStorage.setItem('sp_theme','dark')}
+  else{document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙';localStorage.setItem('sp_theme','light')}
 }
 
 function startListening(){
@@ -362,7 +386,7 @@ function startListening(){
     D.categories=cats;
     D.income.sort((a,b)=>(b.d||'').localeCompare(a.d||''));
     D.expense.sort((a,b)=>(b.d||'').localeCompare(a.d||''));
-    document.getElementById('updTime').textContent='Synced: '+new Date().toLocaleString('he-IL')+' • '+D.income.length+' In, '+D.expense.length+' Out';
+    document.getElementById('updTime').textContent='עודכן: '+new Date().toLocaleString('he-IL')+' | '+D.income.length+' הכנסות, '+D.expense.length+' הוצאות';
     renderAll();
   });
   initDates();
@@ -374,20 +398,17 @@ function initDates(){
   s1=toI(new Date(y,m,1));s2=toI(n);
   document.getElementById('sd').value=s1;document.getElementById('ed').value=s2;
   const P=[
-    {l:'This Month',s:s1,e:toI(new Date(y,m+1,0))},
-    {l:'Last Month',s:`${m===0?y-1:y}-${String(m===0?12:m).padStart(2,'0')}-01`,e:`${m===0?y-1:y}-${String(m===0?12:m).padStart(2,'0')}-${new Date(m===0?y-1:y,m===0?12:m,0).getDate()}`},
+    {l:'החודש',s:s1,e:toI(new Date(y,m+1,0))},
+    {l:'חודש קודם',s:`${m===0?y-1:y}-${String(m===0?12:m).padStart(2,'0')}-01`,e:`${m===0?y-1:y}-${String(m===0?12:m).padStart(2,'0')}-${new Date(m===0?y-1:y,m===0?12:m,0).getDate()}`},
+    {l:'2026',s:'2026-01-01',e:'2026-12-31'},
     {l:'2025',s:'2025-01-01',e:'2025-12-31'},
-    {l:'All Time',s:'2023-01-01',e:'2030-12-31'}
+    {l:'הכל',s:'2023-01-01',e:'2030-12-31'}
   ];
-  document.getElementById('presets').innerHTML=P.map(p=>`<button class="pb whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium border transition bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-primary-500 hover:text-primary-600" onclick="sP(this,'${p.s}','${p.e}')">${p.l}</button>`).join('');
-  document.querySelector('.pb').classList.add('bg-primary-50','dark:bg-primary-900/20','border-primary-200','dark:border-primary-800','text-primary-700','dark:text-primary-300');applyFilter();
+  document.getElementById('presets').innerHTML=P.map(p=>`<button class="pb" onclick="sP(this,'${p.s}','${p.e}')">${p.l}</button>`).join('');
+  document.querySelector('.pb').classList.add('on');applyFilter();
 }
-function sP(el,a,b){
-  document.querySelectorAll('.pb').forEach(x=>x.classList.remove('bg-primary-50','dark:bg-primary-900/20','border-primary-200','dark:border-primary-800','text-primary-700','dark:text-primary-300'));
-  el.classList.add('bg-primary-50','dark:bg-primary-900/20','border-primary-200','dark:border-primary-800','text-primary-700','dark:text-primary-300');
-  document.getElementById('sd').value=a;document.getElementById('ed').value=b;applyFilter()
-}
-function applyFilter(){s1=document.getElementById('sd').value;s2=document.getElementById('ed').value;document.getElementById('pLbl').textContent=new Date(s1).toLocaleDateString('he-IL')+' — '+new Date(s2).toLocaleDateString('he-IL');iCt='הכל';eCt='הכל';renderAll()}
+function sP(el,a,b){document.querySelectorAll('.pb').forEach(x=>x.classList.remove('on'));el.classList.add('on');document.getElementById('sd').value=a;document.getElementById('ed').value=b;applyFilter()}
+function applyFilter(){s1=document.getElementById('sd').value;s2=document.getElementById('ed').value;document.getElementById('pLbl').textContent=new Date(s1).toLocaleDateString('he-IL')+' - '+new Date(s2).toLocaleDateString('he-IL');iCt='הכל';eCt='הכל';renderAll()}
 
 function fmt(n){return'₪'+Math.round(n).toLocaleString('he-IL')}
 function fK(n){return n>=1e6?'₪'+(n/1e6).toFixed(1)+'M':n>=1e3?'₪'+Math.round(n/1000)+'K':'₪'+n}
@@ -395,175 +416,223 @@ function inR(d){return d>=s1&&d<=s2}
 function gF(){return{inc:D.income.filter(r=>inR(r.d)),exp:D.expense.filter(r=>inR(r.d))}}
 function gMC(){return Math.max(1,Math.round((new Date(s2)-new Date(s1))/(30.44*864e5)))}
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
-
-function sumDash(id,arr,colorCls){
+function sumDash(id,arr,cls){
   const t=arr.reduce((s,x)=>s+x.a,0),c=arr.length,a=c>0?t/c:0;
-  document.getElementById(id).innerHTML=`
-    <div class="flex-1"><div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">Total</div><div class="text-xl font-bold tracking-tight ${colorCls}">${fmt(t)}</div></div>
-    <div class="flex-1 border-r border-l border-gray-100 dark:border-gray-800"><div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">Count</div><div class="text-xl font-bold text-gray-800 dark:text-white">${c}</div></div>
-    <div class="flex-1"><div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">Avg</div><div class="text-xl font-bold text-gray-800 dark:text-white">${fmt(a)}</div></div>`;
+  document.getElementById(id).innerHTML=`<div><div class="sd-ttl">סה״כ</div><div class="sd-val ${cls}">${fmt(t)}</div></div><div style="border-right:1px solid var(--border-color);border-left:1px solid var(--border-color)"><div class="sd-ttl">פעולות</div><div class="sd-val">${c}</div></div><div><div class="sd-ttl">ממוצע</div><div class="sd-val">${fmt(a)}</div></div>`;
 }
 
+// ========== WHATSAPP SHARE ==========
 function shareWhatsApp(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
   const d1=new Date(s1).toLocaleDateString('he-IL'),d2=new Date(s2).toLocaleDateString('he-IL');
-  let msg=`💰 *ShmoopsiePoo Report*\n📅 ${d1} - ${d2}\n━━━━━━━━━━━━━━━\n\n📊 *Summary:*\n✅ In: ${fmt(ti)}\n❌ Out: ${fmt(te)}\n${pr>=0?'🟢':'🔴'} Net: ${fmt(pr)}\n\n━━━━━━━━━━━━━━━\nSent from ShmoopsiePoo 💰`;
-  window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(msg),'_blank');
+  let msg=`💰 *ShmoopsiePoo - סיכום תקופה*\n📅 ${d1} - ${d2}\n━━━━━━━━━━━━━━━\n\n📊 *סיכום כללי:*\n✅ הכנסות: ${fmt(ti)}\n❌ הוצאות: ${fmt(te)}\n${pr>=0?'🟢':'🔴'} רווח: ${fmt(pr)}\n\n━━━━━━━━━━━━━━━\nנשלח מ-ShmoopsiePoo 💰`;
+  const url='https://api.whatsapp.com/send?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
 }
 
+// ========== MODAL ==========
 function openModal(type,item){
   curType=type;editId=null;modalCat='';
   document.getElementById('nDate').value=new Date().toISOString().split('T')[0];
   document.getElementById('nAmt').value='';document.getElementById('nDesc').value='';document.getElementById('newCatInput').value='';
-  document.getElementById('modalTitle').textContent=type==='income'?'New Income Record':'New Expense Record';
-  document.getElementById('saveBtn').textContent='Save Record';
+  document.getElementById('modalTitle').textContent=type==='income'?'הוספת הכנסה':'הוספת הוצאה';
+  document.getElementById('saveBtn').textContent='שמור';
   if(item){
     editId=item.id;document.getElementById('nDate').value=item.d;document.getElementById('nAmt').value=item.a;
     document.getElementById('nDesc').value=item.desc;modalCat=item.c||'';
-    document.getElementById('modalTitle').textContent=type==='income'?'Edit Income':'Edit Expense';
-    document.getElementById('saveBtn').textContent='Update Record';
+    document.getElementById('modalTitle').textContent=type==='income'?'עריכת הכנסה':'עריכת הוצאה';
+    document.getElementById('saveBtn').textContent='עדכן';
   }
-  renderModalCats();
-  document.getElementById('addModal').classList.remove('hidden');
-  document.getElementById('addModal').classList.add('flex');
+  renderModalCats();document.getElementById('addModal').classList.add('open');
 }
-function closeModal(){document.getElementById('addModal').classList.add('hidden');document.getElementById('addModal').classList.remove('flex');editId=null}
-
+function closeModal(){document.getElementById('addModal').classList.remove('open');editId=null}
 function renderModalCats(){
   const cats=D.categories||[];
-  document.getElementById('modalCats').innerHTML=cats.map(c=>`<button class="px-3 py-1 rounded-md text-xs font-medium border transition mr-1 mb-1 ${modalCat===c?'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800 ring-1 ring-primary-500/20':'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary-500'}" onclick="setModalCat('${encodeURIComponent(c)}')">${esc(c)}</button>`).join('');
+  document.getElementById('modalCats').innerHTML=cats.map(c=>`<div class="cat-chip ${modalCat===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</div>`).join('');
 }
-function setModalCat(c){modalCat=decodeURIComponent(c);renderModalCats()}
-
 const GEMINI_KEY = 'AIzaSyAk2FdeJSgIZhu_6xHM9SnHOehB1EFgv3o';
+
 async function scanReceipt(input) {
-  const file = input.files[0]; if (!file) return;
-  const scanBtn = document.getElementById('scanBtn'); const scanStatus = document.getElementById('scanStatus');
-  scanBtn.innerHTML = '<span>⏳</span> Processing...'; scanBtn.disabled = true; scanStatus.classList.remove('hidden'); scanStatus.textContent = 'Sending to Gemini AI...'; scanStatus.className='text-xs text-center mt-2 text-gray-400';
+  const file = input.files[0];
+  if (!file) return;
+  const scanBtn = document.getElementById('scanBtn');
+  const scanStatus = document.getElementById('scanStatus');
+  scanBtn.textContent = '⏳ מנתח קבלה...';
+  scanBtn.disabled = true;
+  scanStatus.style.display = 'block';
+  scanStatus.textContent = 'שולח לניתוח AI...';
+  scanStatus.style.color = 'var(--text-muted)';
   try {
-    const base64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
-    const prompt = `JSON ONLY: {"amount": number, "description": "hebrew string", "date": "YYYY-MM-DD", "category": "string"}. Categories: ${(D.categories||[]).join(', ')}`;
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY, {
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ contents: [{parts: [{text: prompt},{inline_data:{mime_type:file.type||'image/jpeg',data:base64}}]}], generationConfig: {temperature: 0.0, maxOutputTokens: 500} })
+    const base64 = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result.split(',')[1]);
+      reader.onerror = rej;
+      reader.readAsDataURL(file);
     });
+    const mimeType = file.type || 'image/jpeg';
+    const catList = (D.categories||[]).join(', ') || 'קניות, אוכל, תחבורה, בריאות, בילויים, חשבונות';
+
+    const prompt = `You are analyzing a receipt or invoice image. Extract the information and respond with ONLY a valid JSON object, no markdown, no explanation, no backticks.
+
+Required format:
+{"amount": 123.45, "description": "business name in Hebrew", "date": "2026-01-28", "category": "chosen category"}
+
+Rules:
+- amount: numeric value only (total amount to pay), no currency symbol
+- description: the business/store name in Hebrew if possible
+- date: in YYYY-MM-DD format, or today's date if not found
+- category: pick the most fitting from this list: ${catList}
+
+Respond with ONLY the JSON object.`;
+
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        contents: [{parts: [{text: prompt},{inline_data:{mime_type:mimeType,data:base64}}]}],
+        generationConfig: {temperature: 0.0, maxOutputTokens: 500}
+      })
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error('API error ' + response.status + ': ' + errText);
+    }
     const data = await response.json();
+    console.log('Gemini response:', JSON.stringify(data));
+    
     let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const jsonMatch = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No JSON found');
+    console.log('Raw text:', text);
+    
+    // נקה markdown אם יש
+    text = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+    
+    // מצא JSON בתוך הטקסט אם יש טקסט נוסף
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON found in response: ' + text);
+    
     const result = JSON.parse(jsonMatch[0]);
-    if (result.amount) document.getElementById('nAmt').value = result.amount;
-    if (result.description) document.getElementById('nDesc').value = result.description;
-    if (result.date) document.getElementById('nDate').value = result.date;
-    if (result.category) { if (!(D.categories||[]).includes(result.category)) { D.categories.push(result.category); dbRef.child('categories').set(D.categories); } modalCat = result.category; renderModalCats(); }
-    scanStatus.textContent = '✅ Analysis Complete'; scanStatus.className='text-xs text-center mt-2 text-success-600 font-bold';
+    console.log('Parsed result:', result);
+    
+    if (result.amount && parseFloat(result.amount) > 0) {
+      document.getElementById('nAmt').value = parseFloat(result.amount);
+    }
+    if (result.description) {
+      document.getElementById('nDesc').value = result.description;
+    }
+    if (result.date && result.date !== 'null' && result.date.match(/\d{4}-\d{2}-\d{2}/)) {
+      document.getElementById('nDate').value = result.date;
+    }
+    if (result.category) {
+      const cats = D.categories || [];
+      if (!cats.includes(result.category)) {
+        cats.push(result.category);
+        D.categories = cats;
+        dbRef.child('categories').set(cats);
+      }
+      modalCat = result.category;
+      renderModalCats();
+    }
+    scanStatus.textContent = '✅ זוהה בהצלחה! בדוק את הפרטים';
+    scanStatus.style.color = '#34d399';
   } catch(err) {
-    scanStatus.textContent = '❌ Analysis Failed'; scanStatus.className='text-xs text-center mt-2 text-danger-500 font-bold';
-  } finally { scanBtn.innerHTML = '<span class="group-hover:scale-110 transition-transform">📷</span> AI Receipt Scan'; scanBtn.disabled = false; input.value = ''; }
+    console.error('scanReceipt error:', err);
+    scanStatus.textContent = '❌ שגיאה: ' + err.message.substring(0, 60);
+    scanStatus.style.color = '#f87171';
+  } finally {
+    scanBtn.innerHTML = '📷 סרוק קבלה / חשבונית אוטומטית';
+    scanBtn.disabled = false;
+    input.value = '';
+  }
 }
 
 function addNewCat(){
   const v=document.getElementById('newCatInput').value.trim();if(!v)return;
-  const cats=D.categories||[];if(cats.includes(v)){alert('Exists');return}
-  cats.push(v); D.categories=cats; dbRef.child('categories').set(cats);
-  document.getElementById('newCatInput').value=''; modalCat=v; renderModalCats();
+  const cats=D.categories||[];if(cats.includes(v)){alert('קיימת');return}
+  cats.push(v);
+  D.categories=cats;
+  dbRef.child('categories').set(cats);
+  document.getElementById('newCatInput').value='';
+  modalCat=v;
+  renderModalCats();
 }
 function saveItem(){
   const d=document.getElementById('nDate').value,a=parseFloat(document.getElementById('nAmt').value),desc=document.getElementById('nDesc').value.trim();
-  if(!d||!a||a<=0||!desc){alert('Fill all fields');return}
-  if(!modalCat){alert('Select category');return}
+  if(!d||!a||a<=0||!desc){alert('מלא תאריך, סכום ותיאור');return}
+  if(!modalCat){alert('בחר קטגוריה');return}
   if(editId){dbRef.child(curType).child(editId).update({d,a,desc,c:modalCat,by:currentUser})}
   else{const id=Date.now().toString();dbRef.child(curType).child(id).set({d,a,desc,c:modalCat,id,by:currentUser});
-    if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}, colors:['#6366f1', '#10b981']});
+    if(curType==='income'&&typeof confetti==='function')confetti({particleCount:150,spread:70,origin:{y:0.6}});
     if(curType==='expense') showSticker();
   }
   closeModal();
 }
-function deleteItem(type,id){if(confirm('Delete item?'))dbRef.child(type).child(id).remove()}
+function deleteItem(type,id){if(confirm('למחוק?'))dbRef.child(type).child(id).remove()}
 function editItem(type,id){const arr=type==='income'?D.income:D.expense;const item=arr.find(r=>r.id===id);if(item)openModal(type,item)}
-function getCatCount(catName){return D.income.filter(r=>r.c===catName).length+D.expense.filter(r=>r.c===catName).length}
 
+// ========== CATEGORIES ==========
+function getCatCount(catName){return D.income.filter(r=>r.c===catName).length+D.expense.filter(r=>r.c===catName).length}
 function addCatFromPage(){
   const v=document.getElementById('newCatPageInput').value.trim();if(!v)return;
-  const cats=D.categories||[];if(cats.includes(v))return;
+  const cats=D.categories||[];if(cats.includes(v)){alert('קטגוריה כבר קיימת');return}
   cats.push(v);dbRef.child('categories').set(cats);document.getElementById('newCatPageInput').value='';
 }
 function deleteCat(catName){
-  if(!confirm('Delete category "'+catName+'"?'))return;
+  const count=getCatCount(catName);let msg='למחוק את "'+catName+'"?';
+  if(count>0)msg+='\nיש '+count+' רשומות עם קטגוריה זו. הן לא יימחקו.';
+  if(!confirm(msg))return;
   dbRef.child('categories').set((D.categories||[]).filter(c=>c!==catName));
 }
-function deleteAllCats(){if(confirm('Delete ALL categories?'))dbRef.child('categories').remove();}
-function openEditCat(oldName){editCatOld=oldName;document.getElementById('editCatName').value=oldName;document.getElementById('editCatModal').classList.remove('hidden');document.getElementById('editCatModal').classList.add('flex')}
-function closeEditCat(){document.getElementById('editCatModal').classList.add('hidden');document.getElementById('editCatModal').classList.remove('flex')}
+function deleteAllCats(){
+  if(!confirm("למחוק את כל הקטגוריות? פעולה זו לא הפיכה!"))return;
+  dbRef.child("categories").remove().then(()=>{
+    D.categories=[];
+    renderCatPage();
+  }).catch(err=>alert("שגיאה: "+err.message));
+}
+function openEditCat(oldName){editCatOld=oldName;document.getElementById('editCatName').value=oldName;document.getElementById('editCatModal').classList.add('open')}
+function closeEditCat(){document.getElementById('editCatModal').classList.remove('open')}
 function saveEditCat(){
   const newName=document.getElementById('editCatName').value.trim();
-  if(!newName||newName===editCatOld)return;
-  const cats=D.categories||[]; cats[cats.indexOf(editCatOld)]=newName; dbRef.child('categories').set(cats);
+  if(!newName){alert('הכנס שם');return}
+  if(newName===editCatOld){closeEditCat();return}
+  const cats=D.categories||[];if(cats.includes(newName)){alert('שם קיים');return}
+  const idx=cats.indexOf(editCatOld);if(idx!==-1){cats[idx]=newName;dbRef.child('categories').set(cats)}
   const updates={};
   D.income.forEach(r=>{if(r.c===editCatOld)updates['income/'+r.id+'/c']=newName});
   D.expense.forEach(r=>{if(r.c===editCatOld)updates['expense/'+r.id+'/c']=newName});
   if(Object.keys(updates).length>0)dbRef.update(updates);
   closeEditCat();
 }
-
 function renderCatPage(){
   const cats=D.categories||[];
-  if(!cats.length){document.getElementById('catList').innerHTML='<div class="text-center p-6 text-gray-400 text-xs italic bg-gray-50 dark:bg-gray-800/50 rounded-lg">No categories yet.</div>';return}
+  if(!cats.length){document.getElementById('catList').innerHTML='<div class="empty" style="padding:12px">אין קטגוריות. הוסף למטה!</div>';return}
   document.getElementById('catList').innerHTML=cats.map(c=>{
-    return`<div class="group flex items-center justify-between p-3 bg-white dark:bg-gray-800/40 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-primary-200 dark:hover:border-primary-900 transition"><span class="text-sm font-medium text-gray-700 dark:text-gray-200">${esc(c)}</span><div class="flex gap-2 opacity-60 group-hover:opacity-100 transition"><button class="text-gray-400 hover:text-primary-500 edit-cat-btn" data-cat="${encodeURIComponent(c)}">✏️</button><button class="text-gray-400 hover:text-danger-500 delete-cat-btn" data-cat="${encodeURIComponent(c)}">🗑</button></div></div>`;
+    const count=getCatCount(c);
+    // שימוש ב-encodeURIComponent לשמירת השם בצורה בטוחה
+    return`<div class="cat-item"><div class="cat-item-name">${esc(c)}</div><div class="cat-item-count">${count} רשומות</div><div class="cat-item-acts"><button class="edit-cat-btn" data-cat="${encodeURIComponent(c)}">✏️</button><button class="delete-cat-btn" data-cat="${encodeURIComponent(c)}">🗑</button></div></div>`;
   }).join('');
 }
 
+// RENDER
 function mkC(r,t){
-  const col=t==='i'?'text-success-600':'text-danger-600', sg=t==='i'?'+':'-', type=t==='i'?'income':'expense';
-  return`<div class="group relative bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-800 flex justify-between items-center transition-all hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm">
-    <div class="flex-1 min-w-0 pr-4">
-      <div class="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate mb-1">${esc(r.desc)}</div>
-      <div class="flex items-center gap-2 text-[10px]">
-        <span class="text-gray-400 font-mono">${r.d}</span>
-        <span class="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">${esc(r.c)}</span>
-        ${r.by?`<span class="text-gray-300">• ${esc(r.by)}</span>`:''}
-      </div>
-    </div>
-    <div class="flex flex-col items-end gap-1">
-      <div class="font-mono font-bold ${col} text-sm tracking-tight">${sg}${fmt(r.a)}</div>
-      <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2 bg-white dark:bg-gray-900 shadow-sm border border-gray-100 dark:border-gray-800 rounded-lg p-1 scale-90">
-        <button onclick="editItem('${type}','${r.id}')" class="p-1 text-gray-400 hover:text-primary-500">✏️</button>
-        <button onclick="deleteItem('${type}','${r.id}')" class="p-1 text-gray-400 hover:text-danger-500">🗑</button>
-      </div>
-    </div>
-  </div>`;
+  const col=t==='i'?'gn':'or',sg=t==='i'?'+':'-',type=t==='i'?'income':'expense';
+  return`<div class="dc"><div class="dr"><div style="flex:1;min-width:0"><div class="dtt">${esc(r.desc)}</div><div class="dm"><span>${r.d}</span><span class="dbg" style="background:${t==='i'?'#14b8a6':'#f97316'}">${esc(r.c)}</span>${r.by?'<span>'+esc(r.by)+'</span>':''}</div></div><div style="display:flex;align-items:center;gap:2px"><div class="da ${col}">${sg}${fmt(r.a)}</div><button class="act-btn" onclick="editItem('${type}','${r.id}')">✏️</button><button class="act-btn" onclick="deleteItem('${type}','${r.id}')">🗑</button></div></div></div>`;
 }
 
 function renderAll(){
   const{inc,exp}=gF();
   const ti=inc.reduce((s,r)=>s+r.a,0),te=exp.reduce((s,r)=>s+r.a,0),pr=ti-te;
   document.getElementById('kpis').innerHTML=`
-    <div class="bg-white dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28 relative overflow-hidden group">
-      <div class="text-[10px] uppercase font-bold text-gray-500 tracking-widest z-10">Total In</div>
-      <div class="text-2xl font-bold text-gray-900 dark:text-white z-10 tracking-tight">${fK(ti)}</div>
-      <div class="absolute -right-2 -bottom-4 text-8xl opacity-[0.03] group-hover:opacity-[0.06] transition-opacity pointer-events-none grayscale">💰</div>
-    </div>
-    <div class="bg-white dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28 relative overflow-hidden group">
-      <div class="text-[10px] uppercase font-bold text-gray-500 tracking-widest z-10">Total Out</div>
-      <div class="text-2xl font-bold text-gray-900 dark:text-white z-10 tracking-tight">${fK(te)}</div>
-      <div class="absolute -right-2 -bottom-4 text-8xl opacity-[0.03] group-hover:opacity-[0.06] transition-opacity pointer-events-none grayscale">💸</div>
-    </div>
-    <div class="bg-white dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28">
-      <div class="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Net Profit</div>
-      <div class="text-2xl font-bold ${pr>=0?'text-success-600':'text-danger-600'} tracking-tight">${fK(pr)}</div>
-    </div>
-    <div class="bg-white dark:bg-gray-900 p-5 rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28">
-      <div class="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Monthly Avg</div>
-      <div class="text-2xl font-bold text-primary-600 tracking-tight">${fK(ti/gMC())}</div>
-    </div>`;
-    
-  const icBC={};inc.forEach(r=>{const c=r.c||'Other';icBC[c]=(icBC[c]||0)+r.a});
-  let sb=`<div class="text-xs font-bold text-gray-900 dark:text-white mb-3 uppercase tracking-wider flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary-500"></span> Income Breakdown</div>`;
-  Object.entries(icBC).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{sb+=`<div class="flex justify-between text-xs py-2 border-b border-gray-100 dark:border-gray-800 last:border-0 items-center"><span class="text-gray-600 dark:text-gray-400">${esc(k)}</span><span class="font-mono font-bold text-gray-900 dark:text-gray-200">${fmt(v)}</span></div>`});
+    <div class="kp"><div class="kl">סה״כ הכנסות</div><div class="kv tl">${fK(ti)}</div></div>
+    <div class="kp"><div class="kl">סה״כ הוצאות</div><div class="kv or">${fK(te)}</div></div>
+    <div class="kp"><div class="kl">רווח לתקופה</div><div class="kv ${pr>=0?'gn':'rd'}">${fK(pr)}</div></div>
+    <div class="kp"><div class="kl">ממוצע חודשי</div><div class="kv bl">${fK(ti/gMC())}</div></div>`;
+  const icBC={};inc.forEach(r=>{const c=r.c||'אחר';icBC[c]=(icBC[c]||0)+r.a});
+  let sb='<div class="sbt">סיכום הכנסות לתקופה</div>';
+  Object.entries(icBC).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{sb+=`<div class="sr"><span>${esc(k)}</span><span class="tl">${fmt(v)}</span></div>`});
+  sb+=`<div class="sr" style="border-top:2px solid var(--border-color);margin-top:4px;padding-top:4px"><span style="font-weight:700">סה״כ</span><span class="tl" style="font-weight:700;font-size:15px">${fmt(ti)}</span></div>`;
   document.getElementById('sBox').innerHTML=sb;
-  
   rBar(inc,exp);rDonut(icBC,ti);rExpC(exp,te);genInsights(inc,exp);rInc();rExp();renderCatPage();
 }
 
@@ -573,85 +642,148 @@ function rBar(inc,exp){
   inc.forEach(r=>{const m=r.d.slice(0,7);if(mo[m])mo[m].i+=r.a});
   exp.forEach(r=>{const m=r.d.slice(0,7);if(mo[m])mo[m].e+=r.a});
   const ks=Object.keys(mo).sort(),mx=Math.max(...ks.map(k=>Math.max(mo[k].i,mo[k].e)),1);
-  document.getElementById('mChart').innerHTML=ks.map(k=>{
-    const hi=Math.max(4,(mo[k].i/mx)*100),he=Math.max(4,(mo[k].e/mx)*100);
-    return`<div class="flex-1 flex flex-col items-center justify-end h-full gap-1 group">
-      <div class="w-full flex items-end gap-[2px] h-full px-1">
-        <div class="flex-1 bg-primary-400 dark:bg-primary-600 rounded-t-[2px] opacity-80 group-hover:opacity-100 transition" style="height:${hi}%"></div>
-        <div class="flex-1 bg-gray-300 dark:bg-gray-600 rounded-t-[2px] opacity-80 group-hover:opacity-100 transition" style="height:${he}%"></div>
-      </div>
-      <div class="text-[9px] text-gray-400 font-medium">${MH[+k.split('-')[1]-1]}</div>
-    </div>`;
-  }).join('');
+  let h='';ks.forEach(k=>{
+    const hi=Math.max(1,(mo[k].i/mx)*140),he=Math.max(1,(mo[k].e/mx)*140);
+    h+=`<div class="bar-g"><div style="display:flex;gap:1px;align-items:flex-end;height:140px;width:100%"><div class="bar" style="height:${hi}px;background:#14b8a6;flex:1"></div><div class="bar" style="height:${he}px;background:#f97316;flex:1"></div></div><div class="bar-l">${MH[+k.split('-')[1]-1]}</div></div>`;
+  });document.getElementById('mChart').innerHTML=h;
 }
 
 function rDonut(cats,total){
   const ar=Object.entries(cats).sort((a,b)=>b[1]-a[1]);let deg=0,grad='';
   ar.forEach((c,i)=>{const p=total>0?c[1]/total*360:0;grad+=`${IC[i%IC.length]} ${deg}deg ${deg+p}deg,`;deg+=p});
-  document.getElementById('donut').style.background=ar.length?`conic-gradient(${grad.slice(0,-1)})`:'#f4f4f5';
-  document.getElementById('donut').innerHTML='<div class="absolute inset-[15%] bg-white dark:bg-gray-900 rounded-full flex items-center justify-center shadow-inner"><span class="text-[10px] text-gray-400 font-bold">Total</span></div>';
-  document.getElementById('piLg').innerHTML=ar.map((c,i)=>{const p=total>0?(c[1]/total*100).toFixed(1):0;return `<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full" style="background:${IC[i%IC.length]}"></div><div class="flex-1 flex justify-between text-[10px]"><span class="text-gray-600 dark:text-gray-300 font-medium truncate">${esc(c[0])}</span><span class="text-gray-400 font-mono">${p}%</span></div></div>`}).join('');
+  document.getElementById('donut').style.background=ar.length?`conic-gradient(${grad.slice(0,-1)})`:'var(--bg-card)';
+  let lg='';ar.forEach((c,i)=>{const p=total>0?(c[1]/total*100).toFixed(1):0;lg+=`<div class="dlg"><div class="ddot" style="background:${IC[i%IC.length]}"></div><div><div style="font-size:10px;font-weight:500">${esc(c[0])}</div><div style="font-size:9px;color:var(--text-muted)">${fmt(c[1])} (${p}%)</div></div></div>`});
+  document.getElementById('piLg').innerHTML=lg;
 }
 
 function rExpC(exp,total){
-  const cats={};exp.forEach(r=>{const c=r.c||'Other';if(!cats[c])cats[c]={t:0,n:0};cats[c].t+=r.a;cats[c].n++});
+  const cats={};exp.forEach(r=>{const c=r.c||'אחר';if(!cats[c])cats[c]={t:0,n:0};cats[c].t+=r.a;cats[c].n++});
   const ar=Object.entries(cats).sort((a,b)=>b[1].t-a[1].t),mx=ar[0]?ar[0][1].t:1;
-  document.getElementById('eCats').innerHTML=ar.slice(0,10).map(([k,v],i)=>
-    `<div class="mb-3 last:mb-0">
-      <div class="flex justify-between text-xs mb-1.5 font-medium">
-        <span class="text-gray-700 dark:text-gray-300">${esc(k)}</span>
-        <span class="text-gray-900 dark:text-white font-mono">${fK(v.t)}</span>
-      </div>
-      <div class="h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-        <div class="h-full rounded-full" style="width:${v.t/mx*100}%;background:${EC[i%EC.length]}"></div>
-      </div>
-    </div>`
-  ).join('')||'<div class="text-center text-gray-400 text-xs py-4">No data available</div>';
+  let h='';ar.slice(0,10).forEach(([k,v],i)=>{
+    h+=`<div class="cr"><div class="crh"><span class="crn">${esc(k)}</span><span class="crv or">${fK(v.t)}</span></div><div class="crt"><div class="crf" style="width:${v.t/mx*100}%;background:${EC[i%EC.length]}"></div></div><div class="crs"><span>${v.n} פעולות</span><span>${total>0?(v.t/total*100).toFixed(1):0}%</span></div></div>`;
+  });document.getElementById('eCats').innerHTML=h||'<div class="empty">אין הוצאות</div>';
 }
 
+// ========== מנוע התובנות המורחב - 7 תובנות חזקות ==========
 function genInsights(inc,exp){
-  let ins=[]; const ti=inc.reduce((s,r)=>s+r.a,0), te=exp.reduce((s,r)=>s+r.a,0), saving = ti-te;
-  if(ti>0){const rate=((saving/ti)*100).toFixed(1);ins.push(rate>20?`🚀 Strong saving rate of <b class="text-success-600">${rate}%</b>`:`📉 Current saving rate: <b>${rate}%</b>`);}
-  if(saving<0) ins.push(`<span class="text-danger-600">⚠️ Deficit Warning: <b>${fmt(Math.abs(saving))}</b> overspent</span>`);
-  else ins.push(`✅ Positive Cashflow: <b>${fmt(saving)}</b> saved.`);
-  document.getElementById('insightsBox').innerHTML = ins.map(t=>`<div class="text-xs p-3 bg-primary-50 dark:bg-primary-900/10 rounded-lg border border-primary-100 dark:border-primary-900/20 text-gray-700 dark:text-gray-300 leading-relaxed">${t}</div>`).join('') || '<div class="text-center text-gray-400 text-xs">Gathering data...</div>';
+  let ins=[];
+  const ti=inc.reduce((s,r)=>s+r.a,0), te=exp.reduce((s,r)=>s+r.a,0), saving = ti-te;
+  
+  // 1. ניתוח יחס חיסכון
+  if(ti>0){
+    const rate = ((saving/ti)*100).toFixed(1);
+    const text = rate > 20 ? `מעולה! אתם חוסכים <b>${rate}%</b> מההכנסה` : `שיעור היתרה (חיסכון) הנוכחי הוא <b>${rate}%</b>`;
+    ins.push(text);
+  }
+
+  // 2. השוואה לחודש קודם (הוצאות)
+  const ps = new Date(new Date(s1).setMonth(new Date(s1).getMonth()-1)).toISOString().slice(0,10);
+  const pe = new Date(new Date(s1).setDate(0)).toISOString().slice(0,10);
+  const prevExp = D.expense.filter(r=>r.d>=ps && r.d<=pe).reduce((s,r)=>s+r.a,0);
+  if(prevExp > 0){
+    const diff = (((te-prevExp)/prevExp)*100).toFixed(1);
+    ins.push(`הוצאות לעומת חודש שעבר: <b style="color:${te > prevExp ? '#f87171' : '#34d399'}">${Math.abs(diff)}% ${te > prevExp ? 'עליה' : 'ירידה'}</b>`);
+  }
+
+  // 3. הוצאה חריגה (פי 2.5 מהממוצע)
+  const avg = te/(exp.length||1);
+  const outlier = exp.find(r=>r.a > avg*2.5);
+  if(outlier) ins.push(`שימו לב: הוצאה חריגה על <b>${outlier.desc}</b> (${fmt(outlier.a)})`);
+
+  // 4. הקטגוריה הכי כבדה
+  const cats={}; exp.forEach(r=>{cats[r.c]=(cats[r.c]||0)+r.a});
+  const top = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  if(top) ins.push(`מוקד ההוצאות המרכזי בתקופה: <b>${top[0]}</b> (${fmt(top[1])})`);
+
+  // 5. ניתוח תזרים (חיסכון מצטבר)
+  if(saving < 0) ins.push(`<b style="color:#f87171">אזהרה:</b> החודש הוצאתם <b>${fmt(Math.abs(saving))}</b> יותר ממה שהכנסתם`);
+  else ins.push(`סיכום ביניים: הצלחתם לשמור בצד <b>${fmt(saving)}</b>`);
+
+  // 6. תדירות רכישות
+  if(exp.length > 20) ins.push(`ביצעתם <b>${exp.length}</b> רכישות בתקופה הזו - אולי כדאי לצמצם תדירות?`);
+
+  // 7. יעד הכנסה
+  if(ti > 0 && inc.length > 0) ins.push(`ממוצע הכנסה בודדת עומד על <b>${fmt(ti/inc.length)}</b>`);
+
+  document.getElementById('insightsBox').innerHTML = ins.map(t=>`<div class="insight-item">${t}</div>`).join('') || '<div class="empty">ממתין לנתונים נוספים...</div>';
 }
 
 function rInc(){
   const{inc}=gF();const cats=['הכל',...new Set(inc.map(r=>r.c).filter(Boolean))];
-  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="px-3 py-1 rounded-md text-[10px] font-medium border transition ${iCt===c?'bg-gray-800 text-white border-gray-800 dark:bg-white dark:text-gray-900':'bg-white dark:bg-gray-900 text-gray-500 border-gray-200 dark:border-gray-700 hover:border-gray-400'}" data-cat="${encodeURIComponent(c)}">${esc(c)}</button>`).join('');
+  document.getElementById('iCh').innerHTML=cats.map(c=>`<button class="fp ${iCt===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</button>`).join('');
   const q=(document.getElementById('iSr').value||'').toLowerCase();
   const fl=inc.filter(r=>(iCt==='הכל'||r.c===iCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumI',fl,'text-success-600');document.getElementById('iCn').textContent=fl.length+' RECORDS FOUND';
-  document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="text-center p-12 text-gray-300 dark:text-gray-600 text-sm">No records found</div>';
+  sumDash('sumI',fl,'gn');document.getElementById('iCn').textContent=fl.length+' מתוך '+inc.length;
+  document.getElementById('iLs').innerHTML=fl.length?fl.map(r=>mkC(r,'i')).join(''):'<div class="empty">אין הכנסות בתקופה</div>';
 }
 
 function rExp(){
   const{exp}=gF();const cats=['הכל',...[...new Set(exp.map(r=>r.c).filter(Boolean))].sort()];
-  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="px-3 py-1 rounded-md text-[10px] font-medium border transition ${eCt===c?'bg-gray-800 text-white border-gray-800 dark:bg-white dark:text-gray-900':'bg-white dark:bg-gray-900 text-gray-500 border-gray-200 dark:border-gray-700 hover:border-gray-400'}" data-cat="${encodeURIComponent(c)}">${esc(c)}</button>`).join('');
+  document.getElementById('eCh').innerHTML=cats.map(c=>`<button class="fp ${eCt===c?'on':''}" data-cat="${encodeURIComponent(c)}">${esc(c)}</button>`).join('');
   const q=(document.getElementById('eSr').value||'').toLowerCase();
   const fl=exp.filter(r=>(eCt==='הכל'||r.c===eCt)&&(!q||r.desc.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)));
-  sumDash('sumE',fl,'text-danger-600');document.getElementById('eCn').textContent=fl.length+' RECORDS FOUND';
-  document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="text-center p-12 text-gray-300 dark:text-gray-600 text-sm">No records found</div>';
+  sumDash('sumE',fl,'or');document.getElementById('eCn').textContent=fl.length+' מתוך '+exp.length;
+  document.getElementById('eLs').innerHTML=fl.length?fl.map(r=>mkC(r,'e')).join(''):'<div class="empty">אין הוצאות בתקופה</div>';
 }
 
-function go(p){curPg=p;
-  ['S', 'I', 'E', 'T'].forEach((x,i)=>{
-    const el = document.getElementById('pg'+x);
-    if(x===p) { el.classList.remove('hidden'); window.scrollTo(0,0); }
-    else el.classList.add('hidden');
-    const btn = document.getElementById('n'+i);
-    if(x===p) { btn.classList.add('text-primary-600','dark:text-primary-400'); btn.classList.remove('text-gray-400'); }
-    else { btn.classList.remove('text-primary-600','dark:text-primary-400'); btn.classList.add('text-gray-400'); }
-  });
-}
+function go(p){curPg=p;['S', 'I', 'E', 'T'].forEach((x,i)=>{document.getElementById('pg'+x).className='pg'+(x===p?' show':'');document.getElementById('n'+i).className='nb '+(x===p?'on':'off')});window.scrollTo(0,0)}
 
+// מאזין אירועים ראשי (delegation) – מטפל בכל הכפתורים הדינמיים
 document.addEventListener('click', function(e) {
-  const delBtn = e.target.closest('.delete-cat-btn'); if (delBtn) { deleteCat(decodeURIComponent(delBtn.getAttribute('data-cat'))); return; }
-  const editBtn = e.target.closest('.edit-cat-btn'); if (editBtn) { openEditCat(decodeURIComponent(editBtn.getAttribute('data-cat'))); return; }
-  const iChBtn = e.target.closest('#iCh button'); if (iChBtn) { iCt = decodeURIComponent(iChBtn.getAttribute('data-cat')); rInc(); return; }
-  const eChBtn = e.target.closest('#eCh button'); if (eChBtn) { eCt = decodeURIComponent(eChBtn.getAttribute('data-cat')); rExp(); return; }
+  // מחיקת קטגוריה - שימוש ב-closest כדי לתפוס גם קליק על האמוג'י בתוך הכפתור
+  const delBtn = e.target.closest('.delete-cat-btn');
+  if (delBtn) {
+    const raw = delBtn.getAttribute('data-cat');
+    if (raw) {
+      const catName = decodeURIComponent(raw);
+      deleteCat(catName);
+    }
+    return;
+  }
+  // עריכת קטגוריה
+  const editBtn = e.target.closest('.edit-cat-btn');
+  if (editBtn) {
+    const raw = editBtn.getAttribute('data-cat');
+    if (raw) {
+      const catName = decodeURIComponent(raw);
+      openEditCat(catName);
+    }
+    return;
+  }
+  // בחירת קטגוריה במודל
+  const chip = e.target.closest('.cat-chip');
+  if (chip) {
+    const raw = chip.getAttribute('data-cat');
+    if (raw) {
+      const catName = decodeURIComponent(raw);
+      modalCat = modalCat === catName ? '' : catName;
+      renderModalCats();
+    }
+    return;
+  }
+  // סינון הכנסות לפי קטגוריה
+  const iChBtn = e.target.closest('#iCh .fp');
+  if (iChBtn) {
+    const raw = iChBtn.getAttribute('data-cat');
+    if (raw) {
+      iCt = decodeURIComponent(raw);
+      rInc();
+    }
+    return;
+  }
+  // סינון הוצאות לפי קטגוריה
+  const eChBtn = e.target.closest('#eCh .fp');
+  if (eChBtn) {
+    const raw = eChBtn.getAttribute('data-cat');
+    if (raw) {
+      eCt = decodeURIComponent(raw);
+      rExp();
+    }
+    return;
+  }
 });
+
+(function(){if(localStorage.getItem('sp_theme')==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='🌙'}})();
 </script>
 </body>
 </html>
